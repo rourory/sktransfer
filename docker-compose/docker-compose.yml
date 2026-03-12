@@ -1,0 +1,90 @@
+version: "3.8"
+
+services:
+  # --- NEXT.JS APP ---
+  nextjs-app:
+    image: rourory/sktransfer:latest
+    container_name: nextjs-app
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      DATABASE_URL: "postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public"
+      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    volumes:
+      - ./uploads:/app/public/uploads
+    command: /bin/sh -c "npx prisma@6 db push && node server.js"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  # --- POSTGRES DATABASE ---
+  db:
+    image: postgres:16
+    container_name: db
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # --- PGADMIN (доступен по /db) ---
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-root}
+      PGADMIN_LISTEN_PORT: 80
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - app-network
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  # --- NGINX (Reverse Proxy) ---
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d # nginx conf (we'll write default.conf сюда)
+      - ./certbot/conf:/etc/letsencrypt # certs
+      - ./certbot/www:/var/www/certbot # webroot для certbot
+    networks:
+      - app-network
+    depends_on:
+      - nextjs-app
+      - pgadmin
+
+  # --- CERTBOT (SSL) ---
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done;'"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  pgadmin-data:
+
+networks:
+  app-network:
+    driver: bridge

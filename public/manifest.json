@@ -1,0 +1,48 @@
+{
+  "name": "SK Transfer - Лучшие трансферы по Беларуси, России и Европе",
+  "short_name": "SK Transfer",
+  "description": "Профессиональные трансферы. VIP-обслуживание, комфортабельные автомобили Mercedes. Заказ онлайн 24/7",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#c9a961",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.jpg",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.jpg",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["travel", "transportation", "business"],
+  "lang": "ru",
+  "dir": "ltr",
+  "shortcuts": [
+    {
+      "name": "Калькулятор",
+      "short_name": "Калькулятор",
+      "description": "Рассчитать стоимость поездки",
+      "url": "/calculator",
+      "icons": [{ "src": "/icon-192.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Автопарк",
+      "short_name": "Автопарк",
+      "description": "Наш автопарк",
+      "url": "/fleet",
+      "icons": [{ "src": "/icon-192.jpg", "sizes": "192x192" }]
+    }
+  ]
+}

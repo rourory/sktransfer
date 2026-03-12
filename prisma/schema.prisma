@@ -1,0 +1,93 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  avatar    String?   
+  bio       String?   
+  articles  Article[]
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  slug          String    @unique // Единый URL для всех языков (например, "sanatorii")
+  image         String?   // Обложка категории
+  
+  // Локализованные названия
+  nameRu        String
+  nameEn        String
+  nameZh        String
+
+  // Локализованные описания
+  descriptionRu String?   @db.Text
+  descriptionEn String?   @db.Text
+  descriptionZh String?   @db.Text
+
+  showInFooter  Boolean   @default(false)
+  
+  articles      Article[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Article {
+  id                String    @id @default(cuid())
+  slug              String    @unique // ЧПУ URL статьи
+  
+  // Локализованные заголовки (H1)
+  titleRu           String
+  titleEn           String
+  titleZh           String
+  
+  // Локализованный контент с плейсхолдерами {0}, {1}...
+  contentRu         String    @db.Text
+  contentEn         String    @db.Text
+  contentZh         String    @db.Text
+  
+  // Локализованные краткие описания
+  excerptRu         String    @db.Text
+  excerptEn         String    @db.Text
+  excerptZh         String    @db.Text
+  
+  // Локализованные SEO-теги
+  metaTitleRu       String?
+  metaTitleEn       String?
+  metaTitleZh       String?
+  metaDescriptionRu String?
+  metaDescriptionEn String?
+  metaDescriptionZh String?
+  
+  // Изображения
+  coverImage        String?   // Главное фото
+  images            String?   @db.Text // JSON массив строк:["url1", "url2"]
+  
+  imageAltRu        String?
+  imageAltEn        String?
+  imageAltZh        String?
+  
+  isPublished       Boolean   @default(true)
+  publishedAt       DateTime? @default(now())
+  
+  categoryId        String
+  category          Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  
+  authorId          String?
+  author            User?     @relation(fields: [authorId], references: [id])
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([categoryId])
+}

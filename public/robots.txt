@@ -1,0 +1,17 @@
+# sktransfer.by robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Sitemaps
+Sitemap: https://sktransfer.by/sitemap.xml
+
+# Yandex Bot specific rules
+User-agent: Yandex
+Allow: /
+
+# Google Bot specific rules  
+User-agent: Googlebot
+Allow: /
