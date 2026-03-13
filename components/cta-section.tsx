@@ -1,5 +1,3 @@
-"use client"
-
 import type { Locale } from "@/lib/i18n"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -65,7 +63,7 @@ export function CTASection({ locale }: CTASectionProps) {
             <Link href="/calculator">
               <Button
                 size="lg"
-                className="gold-gradient text-white hover:shadow-2xl hover:shadow-[var(--gold)]/40 text-lg px-12 py-7 h-auto group"
+                className="gold-gradient text-white hover:shadow-2xl hover:shadow-[var(--gold)]/40 text-lg px-12 py-7 h-auto group cursor-pointer"
               >
                 <span className="flex items-center justify-center text-popover">
                   {t[locale].calculator}
@@ -78,7 +76,7 @@ export function CTASection({ locale }: CTASectionProps) {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-lg px-12 py-7 h-auto border-white/50 text-white hover:bg-white/10 hover:border-white transition-all duration-300 bg-transparent"
+                className="cursor-pointer text-lg px-12 py-7 h-auto border-white/50 text-white hover:bg-white/10 hover:border-white transition-all duration-300 bg-transparent"
               >
                 <Phone className="mr-3 h-5 w-5" />
                 {t[locale].call}

@@ -1,5 +1,3 @@
-"use client"
-
 import { type Locale, translations } from "@/lib/i18n"
 import { ShieldCheck, Sparkles, Clock, Heart } from "lucide-react"
 

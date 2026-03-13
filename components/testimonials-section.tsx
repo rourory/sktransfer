@@ -1,5 +1,3 @@
-"use client"
-
 import type { Locale } from "@/lib/i18n"
 import { Star, Quote } from "lucide-react"
 
@@ -8,7 +6,7 @@ interface TestimonialsSectionProps {
 }
 
 export function TestimonialsSection({ locale }: TestimonialsSectionProps) {
-  const testimonials = [
+  const testimonials =[
     {
       ru: {
         name: "Александр Петров",

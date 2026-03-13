@@ -91,3 +91,14 @@ model Article {
   @@index([slug])
   @@index([categoryId])
 }
+
+model Visitor {
+  id        String   @id @default(cuid())
+  hash      String   // Анонимный хэш (IP + UserAgent + Date)
+  dateStr   String   // Дата в формате YYYY-MM-DD
+  createdAt DateTime @default(now())
+
+  // Составной уникальный ключ: один хэш может быть записан только 1 раз в день
+  @@unique([hash, dateStr]) 
+  @@index([dateStr]) // Индекс для быстрого построения графиков
+}

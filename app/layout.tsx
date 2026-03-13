@@ -1,11 +1,12 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Bebas_Neue } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/language-context";
 import { getLocaleOnServer } from "@/lib/get-locale-on-server";
+import ConsentProvider from "@/components/consent/consent-provider";
+import { VisitorTracker } from "@/components/tracker/visitor-tracker";
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin", "cyrillic"],
@@ -319,9 +320,7 @@ export default async function RootLayout({
     <html className="" lang={locale}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://mc.yandex.ru" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://mc.yandex.ru" />
 
         <link rel="canonical" href="https://sktransfer.by" />
 
@@ -332,30 +331,6 @@ export default async function RootLayout({
 
         <meta httpEquiv="content-language" content="ru, en, zh" />
         <meta name="language" content="Russian" />
-
-        <script
-          type="text/javascript"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(m,e,t,r,i,k,a){
-                m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-                m[i].l=1*new Date();
-                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-              })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=105940841', 'ym');
-              ym(105940841, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-            `,
-          }}
-        />
-        <noscript>
-          <div>
-            <img
-              src="https://mc.yandex.ru/watch/105940841"
-              style={{ position: "absolute", left: "-9999px" }}
-              alt=""
-            />
-          </div>
-        </noscript>
 
         <script
           type="application/ld+json"
@@ -381,11 +356,13 @@ export default async function RootLayout({
       <body
         className={`${ibmPlexSans.variable} ${bebasNeue.variable} font-sans antialiased`}
       >
-        <LanguageProvider initialLocale={locale}>
-          <ScrollToTop />
-          {children}
-          <Analytics />
-        </LanguageProvider>
+        <VisitorTracker/>
+        <ConsentProvider yandexId={Number(process.env.NEXT_PUBLIC_YM_COUNTER_ID)} gaId={process.env.NEXT_PUBLIC_GA_ID}>
+          <LanguageProvider initialLocale={locale}>
+            <ScrollToTop />
+            {children}
+          </LanguageProvider>
+        </ConsentProvider>
       </body>
     </html>
   );
