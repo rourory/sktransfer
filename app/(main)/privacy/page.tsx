@@ -1,23 +1,28 @@
-import type { Metadata } from "next"
-import { cookies } from "next/headers"
-import { type Locale, translations } from "@/lib/i18n"
+import type { Metadata } from "next";
+import { getLocaleOnServer } from "@/lib/get-locale-on-server";
+import { translations } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Политика конфиденциальности | SK Transfer - Премиум трансфер по Беларуси",
-  description:
-    "Политика конфиденциальности SK Transfer. Информация о сборе, использовании и защите персональных данных клиентов.",
-  keywords: "политика конфиденциальности, защита данных, персональные данные, SK Transfer, трансфер Беларусь",
-  openGraph: {
-    title: "Политика конфиденциальности | SK Transfer",
-    description: "Политика конфиденциальности и защиты персональных данных SK Transfer",
-    type: "website",
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleOnServer();
+  const t = translations[locale].seo.privacy;
+
+  return {
+    title: t.title,
+    description: t.description,
+    openGraph: {
+      title: t.title,
+      description: t.description,
+      type: "website",
+      url: "https://sktransfer.by/privacy",
+    },
+    alternates: {
+      canonical: "https://sktransfer.by/privacy",
+    },
+  };
 }
 
 export default async function PrivacyPage() {
-  const cookieStore = await cookies()
-  const locale = (cookieStore.get("locale")?.value as Locale) || "ru"
-  const t = translations[locale]
+  const locale = await getLocaleOnServer();
 
   const content = {
     ru: {
@@ -293,9 +298,9 @@ export default async function PrivacyPage() {
         },
       ],
     },
-  }
+  };
 
-  const pageContent = content[locale]
+  const pageContent = content[locale];
 
   return (
     <main className="min-h-screen bg-background py-12 sm:py-16 lg:py-20">
@@ -307,7 +312,9 @@ export default async function PrivacyPage() {
 
           <p className="text-sm text-muted-foreground mb-8 sm:mb-10">
             {pageContent.updated}:{" "}
-            {new Date().toLocaleDateString(locale === "zh" ? "zh-CN" : locale === "en" ? "en-US" : "ru-RU")}
+            {new Date().toLocaleDateString(
+              locale === "zh" ? "zh-CN" : locale === "en" ? "en-US" : "ru-RU",
+            )}
           </p>
 
           <div className="prose prose-sm sm:prose-base max-w-none space-y-6 sm:space-y-8">
@@ -317,7 +324,10 @@ export default async function PrivacyPage() {
                   {section.title}
                 </h2>
                 {section.content.map((paragraph, pIndex) => (
-                  <p key={pIndex} className="text-muted-foreground leading-relaxed">
+                  <p
+                    key={pIndex}
+                    className="text-muted-foreground leading-relaxed"
+                  >
                     {paragraph}
                   </p>
                 ))}
@@ -327,5 +337,5 @@ export default async function PrivacyPage() {
         </div>
       </div>
     </main>
-  )
+  );
 }

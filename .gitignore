@@ -30,3 +30,5 @@ docker-compose/.env
 docker-compose/nginx/
 
 public/uploads
+
+TODO.md

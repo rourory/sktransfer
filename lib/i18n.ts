@@ -208,6 +208,139 @@ export const translations = {
         updated: "Последнее обновление",
       },
     },
+    seo: {
+      layout: {
+        keywords: [
+          "трансфер Минск",
+          "трансфер Беларусь",
+          "трансфер аэропорт Минск",
+          "SK Transfer",
+          "SKTransfer.by",
+          "трансфер Россия",
+          "VIP трансфер",
+          "экскурсии Минск",
+          "горнолыжные курорты Беларусь",
+          "гид Минск",
+          "трансфер Европа",
+          "индивидуальный трансфер",
+          "лучший трансфер",
+          "Mercedes трансфер",
+          "трансфер Силичи",
+          "трансфер Логойск",
+          "трансфер санаторий",
+          "калькулятор трансфера",
+          "заказать трансфер онлайн",
+        ],
+      },
+      calculator: {
+        title:
+          "Калькулятор стоимости трансфера — SKTransfer.by | Рассчитайте цену онлайн",
+        description:
+          "Онлайн калькулятор стоимости трансфера по Беларуси, России и Европе. Узнайте точную цену поездки за 1 минуту. Тарифы аэропорт Минск от 45 BYN. Прозрачное ценообразование, без скрытых платежей.",
+        keywords: [
+          "калькулятор трансфера",
+          "расчет стоимости трансфера",
+          "цена трансфера Минск",
+          "тариф аэропорт Минск",
+          "рассчитать трансфер онлайн",
+          "стоимость такси Минск",
+        ],
+      },
+      contacts: {
+        title:
+          "Контакты — SKTransfer.by | Заказать трансфер +375 (29) 122-84-84",
+        description:
+          "Связаться с SK Transfer: телефон +375 (29) 122-84-84, email info@sktransfer.by. Работаем 24/7 без выходных. Telegram, WhatsApp, Viber, WeChat. Офис в Минске, Беларусь. Быстрый ответ в течение нескольких минут.",
+        keywords: [
+          "контакты SK Transfer",
+          "телефон трансфер Минск",
+          "заказать трансфер",
+          "трансфер круглосуточно",
+          "офис SK Transfer",
+        ],
+      },
+      excursions: {
+        title:
+          "Экскурсии по Беларуси — SKTransfer.by | Туры и экскурсии из Минска",
+        description:
+          "Увлекательные экскурсии по Беларуси с профессиональными гидами. Обзорные туры по Минску, Брестская крепость, замки Мир и Несвиж, Хатынь, Беловежская пуща. Групповые и индивидуальные экскурсии на комфортабельном транспорте. Бронирование онлайн.",
+        keywords: [
+          "экскурсии Минск",
+          "экскурсии по Беларуси",
+          "туры из Минска",
+          "Брестская крепость экскурсия",
+          "Несвижский замок",
+          "Мирский замок",
+          "экскурсия в Хатынь",
+          "Беловежская пуща тур",
+        ],
+      },
+      fleet: {
+        title:
+          "Автопарк премиум класса — SKTransfer.by | Mercedes S-Class, E-Class, V-Class, Sprinter",
+        description:
+          "Современный автопарк премиум-класса для трансферов. Mercedes S-Class, E-Class, минивэны V-Class, микроавтобусы Sprinter. Комфортабельные автомобили бизнес и премиум сегмента с кондиционером, кожаным салоном, Wi-Fi. Профессиональные водители.",
+        keywords: [
+          "автопарк трансфер",
+          "Mercedes S-Class аренда",
+          "премиум автомобили Минск",
+          "бизнес класс трансфер",
+          "минивэн аренда Минск",
+          "микроавтобус Sprinter",
+          "VIP автомобили",
+        ],
+      },
+      guides: {
+        title:
+          "Профессиональные гиды Минска — SKTransfer.by | Экскурсии с лучшими гидами Беларуси",
+        description:
+          "Опытные профессиональные гиды в Минске и по Беларуси. Индивидуальные и групповые экскурсии на русском, английском, китайском языках. Авторские маршруты по историческим местам, музеям, достопримечательностям. Бронирование онлайн 24/7.",
+        keywords: [
+          "гид Минск",
+          "экскурсовод Минск",
+          "гид по Беларуси",
+          "экскурсии с гидом Минск",
+          "профессиональный гид",
+          "частный гид Минск",
+          "индивидуальные экскурсии Минск",
+        ],
+      },
+      services: {
+        title:
+          "Услуги трансфера — SKTransfer.by | Аэропорт, Вокзал, Межгород, VIP-обслуживание",
+        description:
+          "Полный спектр услуг трансфера: встреча в аэропорту Минск-2, трансфер на вокзал, междугородние поездки по Беларуси и Европе, свадебный кортеж, корпоративный транспорт, VIP-сопровождение. Профессиональные водители, комфортабельные автомобили 24/7.",
+        keywords: [
+          "трансфер аэропорт Минск",
+          "трансфер на вокзал",
+          "междугородний трансфер",
+          "VIP трансфер",
+          "свадебный кортеж",
+          "корпоративный транспорт",
+          "трансфер санаторий",
+        ],
+      },
+      resorts: {
+        title: "Санатории и курорты | SKTransfer.by",
+        description:
+          "Трансфер в лучшие санатории, spa-центры и горнолыжные комплексы Беларуси.",
+        keywords: [
+          "трансфер в санаторий",
+          "санатории Беларуси",
+          "горнолыжные курорты трансфер",
+        ],
+      },
+      privacy: {
+        title: "Политика конфиденциальности | SK Transfer",
+        description:
+          "Политика конфиденциальности SK Transfer. Информация о сборе, использовании и защите персональных данных клиентов.",
+      },
+      terms: {
+        title: "Условия использования | SK Transfer",
+        description:
+          "Условия использования сайта SK Transfer. Правила бронирования, оплаты и предоставления услуг трансфера.",
+      },
+    },
   },
   en: {
     nav: {
@@ -417,6 +550,138 @@ export const translations = {
         updated: "Last updated",
       },
     },
+    seo: {
+      layout: {
+        keywords: [
+          "transfer Minsk",
+          "transfer Belarus",
+          "Minsk airport transfer",
+          "SK Transfer",
+          "SKTransfer.by",
+          "transfer Russia",
+          "VIP transfer",
+          "Minsk excursions",
+          "Belarus ski resorts",
+          "Minsk guide",
+          "transfer Europe",
+          "private transfer",
+          "best transfer service",
+          "Mercedes transfer",
+          "transfer Silichi",
+          "transfer Logoisk",
+          "sanatorium transfer",
+          "transfer calculator",
+          "book transfer online",
+        ],
+      },
+      calculator: {
+        title:
+          "Transfer Cost Calculator — SKTransfer.by | Calculate Price Online",
+        description:
+          "Online calculator for transfer costs in Belarus, Russia, and Europe. Find out the exact trip price in 1 minute. Minsk airport rates from 45 BYN. Transparent pricing, no hidden fees.",
+        keywords: [
+          "transfer calculator",
+          "calculate transfer cost",
+          "transfer price Minsk",
+          "airport transfer rate",
+          "calculate transfer online",
+          "taxi cost Minsk",
+        ],
+      },
+      contacts: {
+        title: "Contacts — SKTransfer.by | Book a transfer +375 (29) 122-84-84",
+        description:
+          "Contact SK Transfer: phone +375 (29) 122-84-84, email info@sktransfer.by. We work 24/7. Telegram, WhatsApp, Viber, WeChat. Office in Minsk, Belarus. Quick response within minutes.",
+        keywords: [
+          "SK Transfer contacts",
+          "phone transfer Minsk",
+          "book transfer",
+          "transfer 24/7",
+          "SK Transfer office",
+        ],
+      },
+      excursions: {
+        title:
+          "Excursions in Belarus — SKTransfer.by | Tours and excursions from Minsk",
+        description:
+          "Fascinating excursions in Belarus with professional guides. Sightseeing tours in Minsk, Brest Fortress, Mir and Nesvizh Castles, Khatyn, Belovezhskaya Pushcha. Group and individual tours. Book online.",
+        keywords: [
+          "Minsk excursions",
+          "Belarus excursions",
+          "tours from Minsk",
+          "Brest Fortress tour",
+          "Nesvizh Castle",
+          "Mir Castle",
+          "Khatyn tour",
+          "Belovezhskaya Pushcha tour",
+        ],
+      },
+      fleet: {
+        title:
+          "Premium Fleet — SKTransfer.by | Mercedes S-Class, E-Class, V-Class, Sprinter",
+        description:
+          "Modern premium fleet for transfers. Mercedes S-Class, E-Class, V-Class minivans, Sprinter minibuses. Comfortable business and premium class cars with AC, leather interior, Wi-Fi. Professional drivers.",
+        keywords: [
+          "fleet transfer",
+          "Mercedes S-Class rental",
+          "premium cars Minsk",
+          "business class transfer",
+          "minivan rental Minsk",
+          "minibus Sprinter",
+          "VIP cars",
+        ],
+      },
+      guides: {
+        title:
+          "Professional Minsk Guides — SKTransfer.by | Excursions with the best guides",
+        description:
+          "Experienced professional guides in Minsk and Belarus. Individual and group excursions in Russian, English, Chinese. Original routes to historical places, museums. Book online 24/7.",
+        keywords: [
+          "guide Minsk",
+          "tour guide Minsk",
+          "guide in Belarus",
+          "guided tours Minsk",
+          "professional guide",
+          "private guide Minsk",
+          "individual excursions Minsk",
+        ],
+      },
+      services: {
+        title:
+          "Transfer Services — SKTransfer.by | Airport, Railway station, Intercity, VIP",
+        description:
+          "Full range of transfer services: Minsk-2 airport pickup, railway station transfer, intercity trips across Belarus and Europe, wedding cortege, corporate transport, VIP escort. 24/7 availability.",
+        keywords: [
+          "Minsk airport transfer",
+          "railway station transfer",
+          "intercity transfer",
+          "VIP transfer",
+          "wedding cortege",
+          "corporate transport",
+          "sanatorium transfer",
+        ],
+      },
+      resorts: {
+        title: "Sanatoriums and Resorts | SKTransfer.by",
+        description:
+          "Transfer to the best sanatoriums, spa centers, and ski resorts in Belarus.",
+        keywords: [
+          "transfer to sanatorium",
+          "Belarus sanatoriums",
+          "ski resort transfer",
+        ],
+      },
+      privacy: {
+        title: "Privacy Policy | SK Transfer",
+        description:
+          "SK Transfer Privacy Policy. Information about the collection, use, and protection of clients' personal data.",
+      },
+      terms: {
+        title: "Terms of Use | SK Transfer",
+        description:
+          "Terms of use for SK Transfer website. Rules for booking, payment, and provision of transfer services.",
+      },
+    },
   },
   zh: {
     nav: {
@@ -615,6 +880,128 @@ export const translations = {
       terms: {
         title: "使用条款",
         updated: "最后更新",
+      },
+    },
+    seo: {
+      layout: {
+        keywords: [
+          "明斯克接送",
+          "白俄罗斯接送服务",
+          "明斯克机场接送",
+          "SK Transfer",
+          "SKTransfer.by",
+          "俄罗斯接送服务",
+          "VIP接送服务",
+          "明斯克 экскурсии",
+          "白俄罗斯滑雪度假村",
+          "明斯克导游",
+          "欧洲接送服务",
+          "私人接送",
+          "最佳接送服务",
+          "奔驰接送",
+          "西利奇接送",
+          "洛戈伊斯克接送",
+          "疗养院接送",
+          "接送费用计算器",
+          "在线预订接送",
+        ],
+      },
+      calculator: {
+        title: "接送费用计算器 — SKTransfer.by | 在线计算价格",
+        description:
+          "白俄罗斯、俄罗斯和欧洲接送费用在线计算器。1分钟内找出确切的旅行价格。明斯克机场费率45 BYN起。透明定价，无隐藏费用。",
+        keywords: [
+          "接送计算器",
+          "计算接送费用",
+          "明斯克接送价格",
+          "机场接送费率",
+          "在线计算接送",
+          "明斯克出租车费用",
+        ],
+      },
+      contacts: {
+        title: "联系方式 — SKTransfer.by | 预订接送 +375 (29) 122-84-84",
+        description:
+          "联系 SK Transfer：电话 +375 (29) 122-84-84，电子邮件 info@sktransfer.by。我们24/7全天候工作。Telegram，WhatsApp，Viber，WeChat。办公室位于白俄罗斯明斯克。",
+        keywords: [
+          "SK Transfer 联系方式",
+          "明斯克接送电话",
+          "预订接送",
+          "24/7接送",
+          "SK Transfer 办公室",
+        ],
+      },
+      excursions: {
+        title: "白俄罗斯游览 — SKTransfer.by | 明斯克出发的旅游和游览",
+        description:
+          "与专业导游一起在白俄罗斯进行迷人的游览。明斯克观光旅游、布列斯特要塞、米尔和涅斯维日城堡、哈丁、别洛韦日斯卡亚普什查。团体和个人旅游。在线预订。",
+        keywords: [
+          "明斯克游览",
+          "白俄罗斯游览",
+          "明斯克出发的旅游",
+          "布列斯特要塞游",
+          "涅斯维日城堡",
+          "米尔城堡",
+          "哈丁游",
+          "别洛韦日斯卡亚普什查游",
+        ],
+      },
+      fleet: {
+        title: "高级车队 — SKTransfer.by | 奔驰 S 级、E 级、V 级、Sprinter",
+        description:
+          "用于接送的现代高级车队。奔驰 S 级、E 级、V 级小型货车、Sprinter 小巴。配有空调、真皮内饰、Wi-Fi的舒适商务和高级轿车。专业司机。",
+        keywords: [
+          "车队接送",
+          "奔驰 S 级租赁",
+          "明斯克高级车",
+          "商务舱接送",
+          "明斯克小型货车租赁",
+          "Sprinter 小巴",
+          "VIP 车辆",
+        ],
+      },
+      guides: {
+        title: "明斯克专业导游 — SKTransfer.by | 与最好的导游一起游览",
+        description:
+          "明斯克和白俄罗斯经验丰富的专业导游。俄语、英语、中文的个人和团体游览。前往历史遗迹、博物馆的原创路线。24/7在线预订。",
+        keywords: [
+          "明斯克导游",
+          "明斯克旅游指南",
+          "白俄罗斯导游",
+          "明斯克导游游览",
+          "专业导游",
+          "明斯克私人导游",
+          "明斯克个人游览",
+        ],
+      },
+      services: {
+        title: "接送服务 — SKTransfer.by | 机场、火车站、城际、VIP",
+        description:
+          "全方位接送服务：明斯克-2机场接机、火车站接送、遍及白俄罗斯和欧洲的城际旅行、婚礼车队、企业运输、VIP护送。24/7全天候提供。",
+        keywords: [
+          "明斯克机场接送",
+          "火车站接送",
+          "城际接送",
+          "VIP 接送",
+          "婚礼车队",
+          "企业运输",
+          "疗养院接送",
+        ],
+      },
+      resorts: {
+        title: "疗养院和度假村 | SKTransfer.by",
+        description: "前往白俄罗斯最佳疗养院、水疗中心和滑雪胜地的接送服务。",
+        keywords: ["疗养院接送", "白俄罗斯疗养院", "滑雪胜地接送"],
+      },
+      privacy: {
+        title: "隐私政策 | SK Transfer",
+        description:
+          "SK Transfer 隐私政策。关于收集、使用和保护客户个人信息的信息。",
+      },
+      terms: {
+        title: "使用条款 | SK Transfer",
+        description:
+          "SK Transfer 网站使用条款。关于预订、付款和提供接送服务的规则。",
       },
     },
   },

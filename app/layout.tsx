@@ -2,11 +2,13 @@ import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Bebas_Neue } from "next/font/google";
 import { ScrollToTop } from "@/components/scroll-to-top";
-import "./globals.css";
 import { LanguageProvider } from "@/lib/language-context";
 import { getLocaleOnServer } from "@/lib/get-locale-on-server";
 import ConsentProvider from "@/components/consent/consent-provider";
 import { VisitorTracker } from "@/components/tracker/visitor-tracker";
+import { translations } from "@/lib/i18n";
+
+import "./globals.css";
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin", "cyrillic"],
@@ -20,112 +22,78 @@ const bebasNeue = Bebas_Neue({
   variable: "--font-display",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://sktransfer.by"),
-  title: {
-    default:
-      "SKTransfer.by — Лучший трансфер по Беларуси, России и Европе | Заказ онлайн 24/7",
-    template: "%s | SKTransfer.by",
-  },
-  description:
-    "Профессиональные трансферы по Беларуси, России, СНГ и Европе. Индивидуальные поездки, VIP-обслуживание, комфортабельные автомобили Mercedes. Трансфер в аэропорт Минск от 45 BYN, экскурсии с опытными гидами, поездки в горнолыжные курорты и санатории. Онлайн калькулятор стоимости. Заказ онлайн 24/7.",
-  keywords: [
-    "трансфер Минск",
-    "трансфер Беларусь",
-    "трансфер аэропорт Минск",
-    "SK Transfer",
-    "SKTransfer.by",
-    "трансфер Россия",
-    "VIP трансфер",
-    "экскурсии Минск",
-    "горнолыжные курорты Беларусь",
-    "гид Минск",
-    "трансфер Европа",
-    "индивидуальный трансфер",
-    "лучший трансфер",
-    "Mercedes трансфер",
-    "трансфер Силичи",
-    "трансфер Логойск",
-    "трансфер санаторий",
-    "калькулятор трансфера",
-    "заказать трансфер онлайн",
-  ],
-  authors: [{ name: "SK Transfer", url: "https://sktransfer.by" }],
-  creator: "SK Transfer",
-  publisher: "SK Transfer",
-  alternates: {
-    canonical: "https://sktransfer.by",
-    languages: {
-      ru: "https://sktransfer.by",
-      en: "https://sktransfer.by",
-      zh: "https://sktransfer.by",
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocaleOnServer();
+  const t = translations[locale];
+
+  // Динамическое определение локали для OpenGraph
+  const ogLocale =
+    locale === "ru" ? "ru_RU" : locale === "en" ? "en_US" : "zh_CN";
+
+  return {
+    metadataBase: new URL("https://sktransfer.by"),
+    title: {
+      default: t.hero.titleWhite + " " + t.hero.titleGold + " | SKTransfer.by",
+      template: "%s | SKTransfer.by",
     },
-  },
-  openGraph: {
-    type: "website",
-    locale: "ru_RU",
-    alternateLocale: ["en_US", "zh_CN"],
-    url: "https://sktransfer.by",
-    siteName: "SKTransfer.by",
-    title: "SKTransfer.by — Лучшие трансферы по Беларуси, России и Европе",
-    description:
-      "Профессиональные трансферы. Индивидуальные поездки, VIP-обслуживание, комфортабельные автомобили Mercedes. Более 15 лет опыта, более 50 000 довольных клиентов. Заказ онлайн 24/7.",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "SK Transfer - Лучшие трансферы по Беларуси",
+    description: t.about.subtitle,
+    keywords: t.seo.layout.keywords,
+    authors: [{ name: "SK Transfer", url: "https://sktransfer.by" }],
+    alternates: {
+      canonical: "https://sktransfer.by",
+      languages: {
+        ru: "https://sktransfer.by",
+        en: "https://sktransfer.by",
+        zh: "https://sktransfer.by",
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "SKTransfer.by — Луший трансфер",
-    description:
-      "Профессиональные трансферы по Беларуси, России и Европе. Более 15 лет опыта.",
-    images: ["/og-image.jpg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
+    },
+    openGraph: {
+      type: "website",
+      locale: ogLocale,
+      alternateLocale: ["ru_RU", "en_US", "zh_CN"].filter(
+        (l) => l !== ogLocale,
+      ),
+      url: "https://sktransfer.by",
+      siteName: "SKTransfer.by",
+      title: t.hero.titleWhite + " " + t.hero.titleGold,
+      description: t.about.subtitle,
+      images: [
+        {
+          url: "/og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "SK Transfer",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t.hero.titleWhite + " " + t.hero.titleGold,
+      description: t.about.subtitle,
+      images: ["/og-image.jpg"],
+    },
+    robots: {
       index: true,
       follow: true,
-      noimageindex: false,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.jpg", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.jpg", sizes: "32x32", type: "image/png" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: [
-      { url: "/apple-touch-icon.jpg", sizes: "180x180", type: "image/png" },
-    ],
-    other: [
-      {
-        rel: "icon",
-        url: "/favicon.ico",
-        type: "image/png",
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
       },
-    ],
-  },
-  manifest: "/manifest.json",
-  verification: {
-    google: "google-site-verification-code-here",
-    yandex: "yandex-verification-code-here",
-  },
-  applicationName: "SK Transfer",
-  category: "travel",
-  generator: "v0.app",
-};
+    },
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "32x32", type: "image/png" },
+        { url: "/favicon-16x16.jpg", sizes: "16x16", type: "image/png" },
+        { url: "/favicon-32x32.jpg", sizes: "32x32", type: "image/png" },
+      ],
+      apple: [
+        { url: "/apple-touch-icon.jpg", sizes: "180x180", type: "image/png" },
+      ],
+    },
+    manifest: "/manifest.json",
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -140,6 +108,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocaleOnServer();
+  const t = translations[locale];
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -148,12 +119,11 @@ export default async function RootLayout({
     url: "https://sktransfer.by",
     logo: "https://sktransfer.by/logo.png",
     image: "https://sktransfer.by/og-image.jpg",
-    description:
-      "Профессиональные трансферы по Беларуси, России и Европе. Индивидуальные поездки, VIP-обслуживание.",
+    description: t.footer.description,
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Минск",
-      addressRegion: "Минская область",
+      addressLocality: locale === "ru" ? "Минск" : "Minsk",
+      addressRegion: locale === "ru" ? "Минская область" : "Minsk Region",
       addressCountry: "BY",
     },
     contactPoint: [
@@ -164,25 +134,9 @@ export default async function RootLayout({
         areaServed: ["BY", "RU", "EU"],
         availableLanguage: ["Russian", "English", "Chinese"],
         contactOption: "TollFree",
-        hoursAvailable: {
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-          ],
-          opens: "00:00",
-          closes: "23:59",
-        },
       },
     ],
     sameAs: ["https://t.me/+375291228484", "https://wa.me/375291228484"],
-    foundingDate: "2008",
-    slogan: "Лучшие трансферы по Беларуси, России и Европе",
   };
 
   const localBusinessSchema = {
@@ -197,8 +151,8 @@ export default async function RootLayout({
     email: "info@sktransfer.by",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Минск",
-      addressLocality: "Минск",
+      streetAddress: locale === "ru" ? "Минск" : "Minsk",
+      addressLocality: locale === "ru" ? "Минск" : "Minsk",
       addressRegion: "Минская область",
       postalCode: "220000",
       addressCountry: "BY",
@@ -239,7 +193,7 @@ export default async function RootLayout({
     "@type": "Service",
     serviceType: "Transfer and Excursion Service",
     name: "SK Transfer Services",
-    description: "Лучшие трансферы и экскурсии по Беларуси, России и Европе",
+    description: t.services.transfersDesc,
     provider: {
       "@type": "Organization",
       name: "SK Transfer",
@@ -267,8 +221,8 @@ export default async function RootLayout({
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Трансфер аэропорт Минск",
-            description: "Комфортабельный трансфер из/в аэропорт Минск-2",
+            name: t.services.airport,
+            description: t.services.airportDesc,
           },
           price: "70",
           priceCurrency: "BYN",
@@ -277,9 +231,8 @@ export default async function RootLayout({
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "VIP трансфер Mercedes S-Class",
-            description:
-              "Премиум трансфер на Mercedes S-Class с личным водителем",
+            name: t.services.vip,
+            description: t.services.vipDesc,
           },
           price: "140",
           priceCurrency: "BYN",
@@ -288,8 +241,8 @@ export default async function RootLayout({
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Экскурсии по Минску",
-            description: "Индивидуальные экскурсии с профессиональным гидом",
+            name: t.services.excursions,
+            description: t.services.excursionsDesc,
           },
           priceSpecification: {
             "@type": "PriceSpecification",
@@ -300,21 +253,6 @@ export default async function RootLayout({
       ],
     },
   };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Главная",
-        item: "https://sktransfer.by",
-      },
-    ],
-  };
-
-  const locale = await getLocaleOnServer();
 
   return (
     <html className="" lang={locale}>
@@ -348,16 +286,15 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
       </head>
       <body
         className={`${ibmPlexSans.variable} ${bebasNeue.variable} font-sans antialiased`}
       >
-        <VisitorTracker/>
-        <ConsentProvider yandexId={Number(process.env.NEXT_PUBLIC_YM_COUNTER_ID)} gaId={process.env.NEXT_PUBLIC_GA_ID}>
+        <VisitorTracker />
+        <ConsentProvider
+          yandexId={Number(process.env.NEXT_PUBLIC_YM_COUNTER_ID)}
+          gaId={process.env.NEXT_PUBLIC_GA_ID}
+        >
           <LanguageProvider initialLocale={locale}>
             <ScrollToTop />
             {children}
