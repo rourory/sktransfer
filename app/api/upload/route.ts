@@ -38,7 +38,7 @@ async function compressImage(
     return { buffer: compressedBuffer, filename: ".webp" };
   } catch (error) {
     console.error("Ошибка компрессии:", error);
-    return { buffer, filename: ".jpg" };
+    return { buffer, filename: ".webp" };
   }
 }
 

@@ -1,23 +1,25 @@
-import type { Locale } from "@/lib/i18n"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ArrowRight, Phone } from "lucide-react"
+import type { Locale } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight, Phone } from "lucide-react";
 
 interface CTASectionProps {
-  locale: Locale
+  locale: Locale;
 }
 
 export function CTASection({ locale }: CTASectionProps) {
   const t = {
     ru: {
       title: "Готовы заказать трансфер?",
-      subtitle: "Рассчитайте стоимость поездки прямо сейчас или свяжитесь с нами для консультации",
+      subtitle:
+        "Рассчитайте стоимость поездки прямо сейчас или свяжитесь с нами для консультации",
       calculator: "Рассчитать стоимость",
       call: "Позвонить нам",
     },
     en: {
       title: "Ready to book a transfer?",
-      subtitle: "Calculate the trip cost right now or contact us for consultation",
+      subtitle:
+        "Calculate the trip cost right now or contact us for consultation",
       calculator: "Calculate price",
       call: "Call us",
     },
@@ -27,7 +29,7 @@ export function CTASection({ locale }: CTASectionProps) {
       calculator: "计算价格",
       call: "致电我们",
     },
-  }
+  };
 
   return (
     <section className="relative py-24 overflow-hidden">
@@ -35,7 +37,8 @@ export function CTASection({ locale }: CTASectionProps) {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/luxury-black-premium-car-night-cityscape.jpg')",
+          backgroundImage:
+            "url('/luxury-black-premium-car-night-cityscape.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
@@ -86,5 +89,5 @@ export function CTASection({ locale }: CTASectionProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

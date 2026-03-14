@@ -15,7 +15,7 @@ function CalculatorPageClient() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/luxury-black-premium-car-night-cityscape.jpg')",
+            backgroundImage: "url('/luxury-black-premium-car-night-cityscape.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

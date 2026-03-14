@@ -63,7 +63,7 @@ export default async function ArticlePage({ params }: Props) {
     description: description,
     image: article.coverImage
       ? [article.coverImage]
-      : ["https://sktransfer.by/og-image.jpg"],
+      : ["https://sktransfer.by/og-image.webp"],
     datePublished: article.publishedAt
       ? article.publishedAt.toISOString()
       : article.createdAt.toISOString(),

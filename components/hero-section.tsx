@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { type Locale, translations } from "@/lib/i18n";
 import Link from "next/link";
 import { Calculator, Car, Compass } from "lucide-react";
+import Image from "next/image";
 
 interface HeroSectionProps {
   locale: Locale;
@@ -14,38 +15,39 @@ export function HeroSection({ locale }: HeroSectionProps) {
   return (
     <header className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0B0B0D] pt-24 sm:pt-28">
       {/* Background Image & Overlay */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage:
-            "url('/mercedes-s-class-black-luxury-sedan-front-three-qu.jpg')",
-        }}
-        role="img"
-        aria-label="Mercedes-Benz S-Class luxury sedan"
+      <Image
+        src="/mercedes-s-class-black-luxury-sedan-front-three-qu.webp"
+        alt="Mercedes-Benz S-Class"
+        fill
+        priority
+        fetchPriority="high"
+        quality={85}
+        sizes="100vw"
+        className="object-cover"
       />
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0B0B0D]/85 via-[#0B0B0D]/75 to-[#0B0B0D]/90" />
+      <div className="absolute inset-0 z-0 bg-linear-to-b from-[#0B0B0D]/85 via-[#0B0B0D]/75 to-[#0B0B0D]/90" />
 
       {/* Main Content */}
       <div className="container relative z-10 mx-auto px-4 sm:px-6 text-center">
         {/* Dynamic Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-in fade-in slide-in-from-bottom duration-700 delay-150">
-          <span className="bg-gradient-to-r from-white via-[#E8EAED] to-white bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] will-change-transform transform-gpu">
+          <span className="bg-linear-to-r from-white via-[#E8EAED] to-white bg-clip-text text-transparent">
             {t.titleWhite}
           </span>
           <br />
-          <span className="bg-gradient-to-r from-[#c9a86a] via-[#d4b068] to-[#c9a86a] bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(201,168,106,0.5)]">
+          <span className="bg-linear-to-r from-[#c9a86a] via-[#d4b068] to-[#c9a86a] bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(201,168,106,0.3)]">
             {t.titleGold}
           </span>
         </h1>
 
         {/* Dynamic Subtitle */}
-        <p className="text-lg sm:text-xl md:text-2xl text-[#BFC5D2] mb-12 max-w-3xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom duration-700 delay-300">
+        <p className="text-lg sm:text-xl md:text-2xl text-[#BFC5D2] mb-12 max-w-3xl mx-auto">
           {t.subtitle}
         </p>
 
         {/* Dynamic Navigation/CTA */}
         <nav
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-in fade-in slide-in-from-bottom duration-700 delay-500"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           aria-label="Main actions"
         >
           <Link href="/calculator">
@@ -86,11 +88,11 @@ export function HeroSection({ locale }: HeroSectionProps) {
 
         {/* Dynamic Statistics */}
         <aside
-          className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 text-white animate-in fade-in slide-in-from-bottom duration-700 delay-700"
+          className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 text-white"
           aria-label="Company statistics"
         >
           <div className="text-center">
-            <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#c9a86a] to-[#d4b068] bg-clip-text text-transparent mb-2">
+            <div className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-[#c9a86a] to-[#d4b068] bg-clip-text text-transparent mb-2">
               15+
             </div>
             <div className="text-sm sm:text-base text-[#BFC5D2] uppercase tracking-wider">
@@ -104,7 +106,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
           />
 
           <div className="text-center">
-            <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#c9a86a] to-[#d4b068] bg-clip-text text-transparent mb-2">
+            <div className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-[#c9a86a] to-[#d4b068] bg-clip-text text-transparent mb-2">
               500+
             </div>
             <div className="text-sm sm:text-base text-[#BFC5D2] uppercase tracking-wider">
@@ -117,8 +119,8 @@ export function HeroSection({ locale }: HeroSectionProps) {
             aria-hidden="true"
           />
 
-          <div className="text-center">
-            <div className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[#c9a86a] to-[#d4b068] bg-clip-text text-transparent mb-2">
+          <div className="mb-6 text-center">
+            <div className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-[#c9a86a] to-[#d4b068] bg-clip-text text-transparent mb-2">
               24/7
             </div>
             <div className="text-sm sm:text-base text-[#BFC5D2] uppercase tracking-wider">

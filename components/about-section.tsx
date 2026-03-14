@@ -13,7 +13,7 @@ export function AboutSection({ locale }: AboutSectionProps) {
       <div
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/mercedes-v-class-black-luxury-van-side-view-profes.jpg')",
+          backgroundImage: "url('/mercedes-v-class-black-luxury-van-side-view-profes.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

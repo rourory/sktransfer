@@ -119,7 +119,7 @@ export function CategoryClient({
                   <div
                     className="h-48 w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                     style={{
-                      backgroundImage: `url(${article.coverImage || "/og-image.jpg"})`,
+                      backgroundImage: `url(${article.coverImage || "/og-image.webp"})`,
                     }}
                   />
                   <div className="p-6 flex flex-col flex-grow bg-white/60">

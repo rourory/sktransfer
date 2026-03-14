@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t.title,
       description: t.description,
       url: "https://sktransfer.by/resorts",
-      images:["/ski-resort-snow-mountains-belarus.jpg"],
+      images:["/ski-resort-snow-mountains-belarus.webp"],
     },
     alternates: {
       canonical: "https://sktransfer.by/resorts",
@@ -42,7 +42,7 @@ export default async function ResortsPage() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/ski-resort-snow-mountains-belarus.jpg')",
+            backgroundImage: "url('/ski-resort-snow-mountains-belarus.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

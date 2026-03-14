@@ -50,7 +50,7 @@ function ArticleClient({ article }: ArticleProps) {
       <div className="relative pt-32 pb-24 overflow-hidden bg-zinc-900">
         <div 
           className="absolute inset-0 z-0 opacity-40"
-          style={{ backgroundImage: `url(${article.coverImage || '/og-image.jpg'})`, backgroundSize: "cover", backgroundPosition: "center" }}
+          style={{ backgroundImage: `url(${article.coverImage || '/og-image.webp'})`, backgroundSize: "cover", backgroundPosition: "center" }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/60 to-transparent z-10" />
 

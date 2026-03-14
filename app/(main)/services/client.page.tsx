@@ -15,7 +15,7 @@ function ServicesPageClient() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/mercedes-e-class-black-luxury-sedan-side-view-prof.jpg')",
+            backgroundImage: "url('/mercedes-e-class-black-luxury-sedan-side-view-prof.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

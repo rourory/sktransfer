@@ -89,7 +89,7 @@ function BlogIndexClient({ categories }: { categories: CategoryWithCount[] }) {
                     <div
                       className="h-56 w-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                       style={{
-                        backgroundImage: `url(${category.image || "/og-image.jpg"})`,
+                        backgroundImage: `url(${category.image || "/og-image.webp"})`,
                       }}
                     />
                     <div className="p-6 flex flex-col flex-grow relative bg-white/60">

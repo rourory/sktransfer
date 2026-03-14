@@ -13,7 +13,7 @@ function FleetPageClient() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/mercedes-s-class-black-luxury-sedan-front-three-qu.jpg')",
+            backgroundImage: "url('/mercedes-s-class-black-luxury-sedan-front-three-qu.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

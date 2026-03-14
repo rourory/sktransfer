@@ -12,6 +12,8 @@ services:
       DATABASE_URL: "postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public"
       NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      NEXT_PUBLIC_YM_COUNTER_ID: ${NEXT_PUBLIC_YM_COUNTER_ID}
+      NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID}
     volumes:
       - ./uploads:/app/public/uploads
     command: /bin/sh -c "npx prisma@6 db push && node server.js"

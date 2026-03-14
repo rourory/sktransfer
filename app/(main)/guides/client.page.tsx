@@ -13,7 +13,7 @@ function GuidesPageClient() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/luxury-sanatorium-spa-resort.jpg')",
+            backgroundImage: "url('/luxury-sanatorium-spa-resort.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

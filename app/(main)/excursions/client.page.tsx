@@ -13,7 +13,7 @@ function ExcursionsPageClient() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/minsk-city-tour-architecture.jpg')",
+            backgroundImage: "url('/minsk-city-tour-architecture.webp')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

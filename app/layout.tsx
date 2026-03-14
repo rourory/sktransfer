@@ -14,12 +14,14 @@ const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin", "cyrillic"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-display",
+  display: "swap",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -59,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: t.about.subtitle,
       images: [
         {
-          url: "/og-image.jpg",
+          url: "/og-image.webp",
           width: 1200,
           height: 630,
           alt: "SK Transfer",
@@ -70,7 +72,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title: t.hero.titleWhite + " " + t.hero.titleGold,
       description: t.about.subtitle,
-      images: ["/og-image.jpg"],
+      images: ["/og-image.webp"],
     },
     robots: {
       index: true,
@@ -118,7 +120,7 @@ export default async function RootLayout({
     alternateName: "SKTransfer.by",
     url: "https://sktransfer.by",
     logo: "https://sktransfer.by/logo.png",
-    image: "https://sktransfer.by/og-image.jpg",
+    image: "https://sktransfer.by/og-image.webp",
     description: t.footer.description,
     address: {
       "@type": "PostalAddress",
@@ -145,7 +147,7 @@ export default async function RootLayout({
     "@id": "https://sktransfer.by",
     name: "SK Transfer",
     legalName: "SK Transfer",
-    image: "https://sktransfer.by/og-image.jpg",
+    image: "https://sktransfer.by/og-image.webp",
     url: "https://sktransfer.by",
     telephone: "+375-29-122-84-84",
     email: "info@sktransfer.by",
@@ -269,6 +271,20 @@ export default async function RootLayout({
 
         <meta httpEquiv="content-language" content="ru, en, zh" />
         <meta name="language" content="Russian" />
+      </head>
+      <body
+        className={`${ibmPlexSans.variable} ${bebasNeue.variable} font-sans antialiased`}
+      >
+        <ConsentProvider
+          yandexId={Number(process.env.NEXT_PUBLIC_YM_COUNTER_ID)}
+          gaId={process.env.NEXT_PUBLIC_GA_ID}
+        >
+          <LanguageProvider initialLocale={locale}>
+            <ScrollToTop />
+            {children}
+          </LanguageProvider>
+        </ConsentProvider>
+        <VisitorTracker />
 
         <script
           type="application/ld+json"
@@ -286,20 +302,6 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
         />
-      </head>
-      <body
-        className={`${ibmPlexSans.variable} ${bebasNeue.variable} font-sans antialiased`}
-      >
-        <VisitorTracker />
-        <ConsentProvider
-          yandexId={Number(process.env.NEXT_PUBLIC_YM_COUNTER_ID)}
-          gaId={process.env.NEXT_PUBLIC_GA_ID}
-        >
-          <LanguageProvider initialLocale={locale}>
-            <ScrollToTop />
-            {children}
-          </LanguageProvider>
-        </ConsentProvider>
       </body>
     </html>
   );

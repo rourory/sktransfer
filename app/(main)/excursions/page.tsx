@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: t.title,
       description: t.description,
       url: "https://sktransfer.by/excursions",
-      images: ["/og-image.jpg"],
+      images: ["/og-image.webp"],
     },
     alternates: {
       canonical: "https://sktransfer.by/excursions",
