@@ -22,7 +22,7 @@ async function main() {
   const catSanatorium = await prisma.category.create({
     data: {
       slug: "sanatorii",
-      image: "/uploads/category-sanatorii.jpg", // Заглушка, потом замените на реальную фотку
+      image: "/uploads/category-sanatorii.webp", // Заглушка, потом замените на реальную фотку
       nameRu: "Санатории и курорты",
       nameEn: "Sanatoriums and Resorts",
       nameZh: "疗养院和度假村",
@@ -38,7 +38,7 @@ async function main() {
   const catExcursions = await prisma.category.create({
     data: {
       slug: "excursions",
-      image: "/uploads/category-excursions.jpg",
+      image: "/uploads/category-excursions.webp",
       nameRu: "Экскурсии и туризм",
       nameEn: "Excursions and Tourism",
       nameZh: "游览和旅游",
@@ -53,7 +53,7 @@ async function main() {
   const catTransfer = await prisma.category.create({
     data: {
       slug: "transfer",
-      image: "/uploads/category-transfer.jpg",
+      image: "/uploads/category-transfer.webp",
       nameRu: "Трансфер и поездки",
       nameEn: "Transfers and Trips",
       nameZh: "接送和旅行",
@@ -72,11 +72,11 @@ async function main() {
       slug: "kak-dobratsya-v-sanatoriy-radon",
       categoryId: catSanatorium.id,
       authorId: author.id,
-      coverImage: "/uploads/article-radon-cover.jpg",
+      coverImage: "/uploads/article-radon-cover.webp",
       // Массив картинок для плейсхолдеров
       images: JSON.stringify([
-        "/uploads/radon-building.jpg", // Для {0}
-        "/uploads/radon-pool.jpg", // Для {1}
+        "/uploads/radon-building.webp", // Для {0}
+        "/uploads/radon-pool.webp", // Для {1}
       ]),
 
       // РУССКИЙ
@@ -137,10 +137,10 @@ async function main() {
       slug: "zamki-mir-i-nesvizh-za-odin-den",
       categoryId: catExcursions.id,
       authorId: author.id,
-      coverImage: "/uploads/article-castles-cover.jpg",
+      coverImage: "/uploads/article-castles-cover.webp",
       images: JSON.stringify([
-        "/uploads/mir-castle.jpg", // Для {0}
-        "/uploads/nesvizh-park.jpg", // Для {1}
+        "/uploads/mir-castle.webp", // Для {0}
+        "/uploads/nesvizh-park.webp", // Для {1}
       ]),
 
       // РУССКИЙ

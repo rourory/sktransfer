@@ -65,6 +65,7 @@ services:
       - ./nginx:/etc/nginx/conf.d # nginx conf (we'll write default.conf сюда)
       - ./certbot/conf:/etc/letsencrypt # certs
       - ./certbot/www:/var/www/certbot # webroot для certbot
+      - ./uploads:/var/www/uploads
     networks:
       - app-network
     depends_on:

@@ -1,39 +1,50 @@
-import { MetadataRoute } from 'next';
-import prisma from '@/lib/prisma'; // Проверь правильность пути к твоему prisma клиенту
+import { MetadataRoute } from "next";
+import prisma from "@/lib/prisma"; // Проверь правильность пути к твоему prisma клиенту
 
-const BASE_URL = 'https://sktransfer.by';
-const LOCALES =['ru', 'en', 'zh'];
+const BASE_URL = "https://sktransfer.by";
+const LOCALES = ["ru", "en", "zh"];
+gi
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 1. Массив статических роутов
-  const staticRoutes =[
-    '',
-    '/services',
-    '/fleet',
-    '/calculator',
-    '/contacts',
-    '/excursions',
-    '/guides',
-    '/resorts',
-    '/privacy',
-    '/terms',
-    '/blog',
+  const staticRoutes = [
+    "",
+    "/services",
+    "/fleet",
+    "/calculator",
+    "/contacts",
+    "/excursions",
+    "/guides",
+    "/resorts",
+    "/privacy",
+    "/terms",
+    "/blog",
   ];
 
-  const sitemapEntries: MetadataRoute.Sitemap =[];
+  const sitemapEntries: MetadataRoute.Sitemap = [];
 
   // Функция-помощник для добавления локализованных версий ссылок
   // Для ru отдаем чистый URL, для en/zh добавляем параметр ?lang=
   const addLocalizedEntries = (
     path: string,
     lastModified: Date,
-    changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never',
-    priority: number
+    changeFrequency:
+      | "always"
+      | "hourly"
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "yearly"
+      | "never",
+    priority: number,
   ) => {
     LOCALES.forEach((locale) => {
-      const url = locale === 'ru' 
-        ? `${BASE_URL}${path}` 
-        : `${BASE_URL}${path}?lang=${locale}`;
+      const url =
+        locale === "ru"
+          ? `${BASE_URL}${path}`
+          : `${BASE_URL}${path}?lang=${locale}`;
 
       sitemapEntries.push({
         url,
@@ -49,8 +60,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     addLocalizedEntries(
       route,
       new Date(), // В идеале здесь должна быть дата последнего деплоя/обновления
-      'weekly',
-      route === '' ? 1.0 : 0.8 // Главной странице даем максимальный приоритет
+      "weekly",
+      route === "" ? 1.0 : 0.8, // Главной странице даем максимальный приоритет
     );
   });
 
@@ -64,8 +75,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       addLocalizedEntries(
         `/blog/${category.slug}`,
         category.updatedAt,
-        'weekly',
-        0.7
+        "weekly",
+        0.7,
       );
     });
 
@@ -85,12 +96,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       addLocalizedEntries(
         `/blog/${article.category.slug}/${article.slug}`,
         article.updatedAt,
-        'monthly', // Статьи обычно меняются реже
-        0.6
+        "monthly", // Статьи обычно меняются реже
+        0.6,
       );
     });
   } catch (error) {
-    console.error('Ошибка при генерации sitemap:', error);
+    console.error("Ошибка при генерации sitemap:", error);
     // Даже если БД упала, мы всё равно вернем хотя бы статические страницы
   }
 
