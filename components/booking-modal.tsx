@@ -1,63 +1,76 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { type Locale, translations } from "@/lib/i18n"
-import { User, Phone, Mail, MessageSquare, CheckCircle2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { type Locale, translations } from "@/lib/i18n";
+import { User, Phone, Mail, MessageSquare, CheckCircle2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface BookingModalProps {
-  open: boolean
-  onClose: () => void
-  locale: Locale
-  selectedTariff?: string
-  distance?: string
-  from?: string
-  to?: string
+  open: boolean;
+  onClose: () => void;
+  locale: Locale;
+  selectedTariff?: string;
+  distance?: string;
+  from?: string;
+  to?: string;
 }
 
-export function BookingModal({ open, onClose, locale, selectedTariff, distance, from, to }: BookingModalProps) {
-  const [name, setName] = useState("")
-  const [phone, setPhone] = useState("")
-  const [email, setEmail] = useState("")
-  const [comment, setComment] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const { toast } = useToast()
+export function BookingModal({
+  open,
+  onClose,
+  locale,
+  selectedTariff,
+  distance,
+  from,
+  to,
+}: BookingModalProps) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const { toast } = useToast();
 
-  const t = translations[locale]
+  const t = translations[locale];
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      let message = `${t.contact.form.name}: ${name}\n${t.contact.form.phone}: ${phone}`
+      let message = `${t.contact.form.name}: ${name}\n${t.contact.form.phone}: ${phone}`;
 
       if (email) {
-        message += `\n${t.contact.form.email}: ${email}`
+        message += `\n${t.contact.form.email}: ${email}`;
       }
 
       if (selectedTariff) {
-        message += `\n\n${locale === "ru" ? "Т��риф" : locale === "en" ? "Tariff" : "关税"}: ${selectedTariff}`
+        message += `\n\n${locale === "ru" ? "Тариф" : locale === "en" ? "Tariff" : "关税"}: ${selectedTariff}`;
       }
 
       if (distance) {
-        message += `\n${locale === "ru" ? "Расстояние" : locale === "en" ? "Distance" : "距离"}: ${distance} км`
+        message += `\n${locale === "ru" ? "Расстояние" : locale === "en" ? "Distance" : "距离"}: ${distance} км`;
       }
 
       if (from && to) {
-        message += `\n${locale === "ru" ? "Маршрут" : locale === "en" ? "Route" : "路线"}: ${from} → ${to}`
+        message += `\n${locale === "ru" ? "Маршрут" : locale === "en" ? "Route" : "路线"}: ${from} → ${to}`;
       }
 
       if (comment) {
-        message += `\n\n${t.contact.form.message}: ${comment}`
+        message += `\n\n${t.contact.form.message}: ${comment}`;
       }
 
       const response = await fetch("/api/send-telegram", {
@@ -70,51 +83,64 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
           message,
           type: "booking",
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to send")
+        throw new Error("Failed to send");
       }
 
-      setIsSuccess(true)
+      setIsSuccess(true);
 
       toast({
-        title: locale === "ru" ? "Заказ оформлен!" : locale === "en" ? "Booking confirmed!" : "预订已确认！",
+        title:
+          locale === "ru"
+            ? "Заказ оформлен!"
+            : locale === "en"
+              ? "Booking confirmed!"
+              : "预订已确认！",
         description:
           locale === "ru"
             ? "Мы свяжемся с вами в ближайшее время"
             : locale === "en"
               ? "We will contact you soon"
               : "我们会尽快与您联系",
-      })
+      });
 
       setTimeout(() => {
-        setIsSuccess(false)
-        onClose()
-        setName("")
-        setPhone("")
-        setEmail("")
-        setComment("")
-      }, 2500)
+        setIsSuccess(false);
+        onClose();
+        setName("");
+        setPhone("");
+        setEmail("");
+        setComment("");
+      }, 2500);
     } catch (error) {
-      console.error("[v0] Booking error:", error)
+      console.error("[v0] Booking error:", error);
       toast({
         title: locale === "ru" ? "Ошибка" : locale === "en" ? "Error" : "错误",
         description:
-          locale === "ru" ? "Не удалось отправить заказ" : locale === "en" ? "Failed to send booking" : "发送失败",
+          locale === "ru"
+            ? "Не удалось отправить заказ"
+            : locale === "en"
+              ? "Failed to send booking"
+              : "发送失败",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="w-[95vw] sm:w-[90vw] sm:max-w-[500px] max-h-[95vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader className="space-y-2 sm:space-y-3">
           <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold gold-gradient-text text-left">
-            {locale === "ru" ? "Оформление заказа" : locale === "en" ? "Book Transfer" : "预订转账"}
+            {locale === "ru"
+              ? "Оформление заказа"
+              : locale === "en"
+                ? "Book Transfer"
+                : "预订转账"}
           </DialogTitle>
         </DialogHeader>
 
@@ -124,7 +150,11 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
               <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
             </div>
             <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2">
-              {locale === "ru" ? "Заказ оформлен!" : locale === "en" ? "Booking confirmed!" : "预订已确认！"}
+              {locale === "ru"
+                ? "Заказ оформлен!"
+                : locale === "en"
+                  ? "Booking confirmed!"
+                  : "预订已确认！"}
             </h3>
             <p className="text-xs sm:text-sm md:text-base text-muted-foreground px-2 sm:px-4">
               {locale === "ru"
@@ -139,12 +169,23 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
             {selectedTariff && (
               <div className="p-2.5 sm:p-3 md:p-4 bg-[var(--gold)]/10 rounded-lg border border-[var(--gold)]/20">
                 <p className="text-xs sm:text-sm text-muted-foreground mb-1">
-                  {locale === "ru" ? "Выбранный тариф:" : locale === "en" ? "Selected tariff:" : "选定关税："}
+                  {locale === "ru"
+                    ? "Выбранный тариф:"
+                    : locale === "en"
+                      ? "Selected tariff:"
+                      : "选定关税："}
                 </p>
-                <p className="font-semibold text-sm sm:text-base md:text-lg break-words">{selectedTariff}</p>
+                <p className="font-semibold text-sm sm:text-base md:text-lg break-words">
+                  {selectedTariff}
+                </p>
                 {distance && (
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                    {locale === "ru" ? "Расстояние:" : locale === "en" ? "Distance:" : "距离："} {distance} км
+                    {locale === "ru"
+                      ? "Расстояние:"
+                      : locale === "en"
+                        ? "Distance:"
+                        : "距离："}{" "}
+                    {distance} км
                   </p>
                 )}
                 {from && to && (
@@ -158,13 +199,25 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
             <div className="space-y-1.5 sm:space-y-2">
               <Label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold)] flex-shrink-0" />
-                <span>{locale === "ru" ? "Ваше имя" : locale === "en" ? "Your name" : "您的姓名"}</span>
+                <span>
+                  {locale === "ru"
+                    ? "Ваше имя"
+                    : locale === "en"
+                      ? "Your name"
+                      : "您的姓名"}
+                </span>
               </Label>
               <Input
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={locale === "ru" ? "Иван Иванов" : locale === "en" ? "John Doe" : "张三"}
+                placeholder={
+                  locale === "ru"
+                    ? "Иван Иванов"
+                    : locale === "en"
+                      ? "John Doe"
+                      : "张三"
+                }
                 className="w-full h-9 sm:h-10 text-sm sm:text-base"
               />
             </div>
@@ -172,7 +225,13 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
             <div className="space-y-1.5 sm:space-y-2">
               <Label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold)] flex-shrink-0" />
-                <span>{locale === "ru" ? "Телефон" : locale === "en" ? "Phone" : "电话"}</span>
+                <span>
+                  {locale === "ru"
+                    ? "Телефон"
+                    : locale === "en"
+                      ? "Phone"
+                      : "电话"}
+                </span>
               </Label>
               <Input
                 required
@@ -187,7 +246,13 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
             <div className="space-y-1.5 sm:space-y-2">
               <Label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold)] flex-shrink-0" />
-                <span>{locale === "ru" ? "Email" : locale === "en" ? "Email" : "电子邮件"}</span>
+                <span>
+                  {locale === "ru"
+                    ? "Email"
+                    : locale === "en"
+                      ? "Email"
+                      : "电子邮件"}
+                </span>
               </Label>
               <Input
                 type="email"
@@ -201,7 +266,13 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
             <div className="space-y-1.5 sm:space-y-2">
               <Label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                 <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--gold)] flex-shrink-0" />
-                <span>{locale === "ru" ? "Комментарий" : locale === "en" ? "Comment" : "评论"}</span>
+                <span>
+                  {locale === "ru"
+                    ? "Комментарий"
+                    : locale === "en"
+                      ? "Comment"
+                      : "评论"}
+                </span>
               </Label>
               <Textarea
                 value={comment}
@@ -225,7 +296,11 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
                 onClick={onClose}
                 className="w-full sm:flex-1 h-9 sm:h-10 text-sm sm:text-base bg-transparent order-2 sm:order-1"
               >
-                {locale === "ru" ? "Отмена" : locale === "en" ? "Cancel" : "取消"}
+                {locale === "ru"
+                  ? "Отмена"
+                  : locale === "en"
+                    ? "Cancel"
+                    : "取消"}
               </Button>
               <Button
                 type="submit"
@@ -249,5 +324,5 @@ export function BookingModal({ open, onClose, locale, selectedTariff, distance, 
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }

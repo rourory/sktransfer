@@ -6,6 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
       disallow: [
+        "/db/",
         "/admin/", // Закрываем админку от индексации
         "/api/", // Закрываем служебные API роуты
         "/actions/", // На всякий случай закрываем серверные экшены

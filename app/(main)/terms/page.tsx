@@ -21,7 +21,29 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function TermsPage() {
+export default async function TermsPage() {
+ const locale = await getLocaleOnServer();
+  const t = translations[locale];
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: t.nav.home,
+        item: "https://sktransfer.by",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: t.nav.services,
+        item: "https://sktransfer.by/services",
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-background py-12 sm:py-16 lg:py-20">
       <div className="container mx-auto px-4 sm:px-6 max-w-4xl">

@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma"; // Проверь правильность п
 
 const BASE_URL = "https://sktransfer.by";
 const LOCALES = ["ru", "en", "zh"];
-gi
+
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 

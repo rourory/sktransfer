@@ -23,6 +23,36 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function ServicesPage() {
-  return <ServicesPageClient />;
+export default async function ServicesPage() {
+  const locale = await getLocaleOnServer();
+  const t = translations[locale];
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: t.nav.home,
+        item: "https://sktransfer.by",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: t.pages.terms.title,
+        item: "https://sktransfer.by/terms",
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <ServicesPageClient />;
+    </>
+  );
 }

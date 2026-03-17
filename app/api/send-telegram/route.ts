@@ -1,88 +1,110 @@
-import { type NextRequest, NextResponse } from "next/server"
+// app/api/send-telegram/route.ts
+import { type NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma"; // Путь к вашему prisma клиенту
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { name, phone, email, message, type } = body
+    const body = await req.json();
+    const { name, phone, email, message, type } = body;
 
-    const botToken = process.env.TELEGRAM_BOT_TOKEN
-    const chatId = process.env.TELEGRAM_CHAT_ID
-    const chatId2 = "584831028" // Второй аккаунт
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
 
-    if (!botToken || !chatId) {
-      console.error("[v0] Telegram credentials not configured")
-      return NextResponse.json({ error: "Telegram not configured" }, { status: 500 })
+    if (!botToken) {
+      console.error("[Telegram] Bot token not configured");
+      return NextResponse.json(
+        { error: "Telegram not configured" },
+        { status: 500 },
+      );
     }
 
-    // Формируем сообщение для Telegram
-    let telegramMessage = `🔔 <b>Новая заявка с сайта SKTransfer.by</b>\n\n`
-    telegramMessage += `📋 <b>Тип:</b> ${type || "Контактная форма"}\n`
-    telegramMessage += `👤 <b>Имя:</b> ${name}\n`
-    telegramMessage += `📱 <b>Телефон:</b> ${phone}\n`
+    // 1. Получаем всех активных получателей из базы данных
+    const receivers = await prisma.telegramNotificationReceiver.findMany();
+
+    if (receivers.length === 0) {
+      console.warn("[Telegram] No admin receivers found in database.");
+      // Возвращаем успех сайта, даже если админов нет, чтобы не ломать форму клиенту
+      return NextResponse.json({
+        success: true,
+        warning: "No admins registered",
+      });
+    }
+
+    // 2. Формируем сообщение для Telegram
+    let telegramMessage = `🔔 <b>Новая заявка с сайта SKTransfer.by</b>\n\n`;
+    telegramMessage += `📋 <b>Тип:</b> ${type || "Контактная форма"}\n`;
+    telegramMessage += `👤 <b>Имя:</b> ${name}\n`;
+    telegramMessage += `📱 <b>Телефон:</b> ${phone}\n`;
 
     if (email) {
-      telegramMessage += `📧 <b>Email:</b> ${email}\n`
+      telegramMessage += `📧 <b>Email:</b> ${email}\n`;
     }
 
     if (message) {
-      telegramMessage += `💬 <b>Сообщение:</b>\n${message}\n`
+      telegramMessage += `💬 <b>Сообщение:</b>\n${message}\n`;
     }
 
-    telegramMessage += `\n⏰ <b>Время:</b> ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Minsk" })}`
+    telegramMessage += `\n⏰ <b>Время:</b> ${new Date().toLocaleString("ru-RU", { timeZone: "Europe/Minsk" })}`;
 
-    const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`
+    const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-    const sendToChat1 = fetch(telegramUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: telegramMessage,
-        parse_mode: "HTML",
+    // 3. Создаем массив промисов для отправки каждому администратору
+    const sendPromises = receivers.map((receiver) =>
+      fetch(telegramUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: receiver.telegramId,
+          text: telegramMessage,
+          parse_mode: "HTML",
+        }),
+      }).then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          // Если ошибка (например, админ заблокировал бота), пробрасываем её, чтобы отловить в allSettled
+          throw new Error(`Chat ${receiver.telegramId}: ${data.description}`);
+        }
+        return data;
       }),
-    })
+    );
 
-    const sendToChat2 = fetch(telegramUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId2,
-        text: telegramMessage,
-        parse_mode: "HTML",
-      }),
-    })
+    // 4. Ждем выполнения всех запросов (allSettled не падает, если один из запросов завершился ошибкой)
+    const results = await Promise.allSettled(sendPromises);
 
-    // Ждем оба запроса
-    const [response1, response2] = await Promise.all([sendToChat1, sendToChat2])
+    // 5. Анализируем результаты для логирования
+    let successCount = 0;
+    results.forEach((result, index) => {
+      const tgId = receivers[index].telegramId;
+      if (result.status === "fulfilled") {
+        successCount++;
+        console.log(`[Telegram] Message sent to chat ${tgId}`);
+      } else {
+        console.error(
+          `[Telegram] Failed to send to chat ${tgId}:`,
+          result.reason,
+        );
+        // Опционально: здесь можно удалять пользователя из БД, если ошибка означает блокировку бота
+        // например, если текст ошибки содержит "bot was blocked by the user"
+      }
+    });
 
-    const data1 = await response1.json()
-    const data2 = await response2.json()
-
-    // Проверяем успешность обоих запросов
-    if (!response1.ok) {
-      console.error("[v0] Telegram API error (chat 1):", data1)
-    } else {
-      console.log("[v0] Message sent to Telegram chat 1 successfully")
-    }
-
-    if (!response2.ok) {
-      console.error("[v0] Telegram API error (chat 2):", data2)
-    } else {
-      console.log("[v0] Message sent to Telegram chat 2 successfully")
-    }
-
-    // Возвращаем успех если хотя бы один запрос прошел
-    if (response1.ok || response2.ok) {
+    // Если хотя бы одному админу доставили — считаем успехом
+    if (successCount > 0) {
       return NextResponse.json({
         success: true,
-        sent_to_chat1: response1.ok,
-        sent_to_chat2: response2.ok,
-      })
+        deliveredTo: successCount,
+        totalAdmins: receivers.length,
+      });
     } else {
-      return NextResponse.json({ error: "Failed to send to both chats" }, { status: 500 })
+      return NextResponse.json(
+        { error: "Failed to send to any admin chat" },
+        { status: 500 },
+      );
     }
   } catch (error) {
-    console.error("[v0] Error sending to Telegram:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("[Telegram] Critical error sending to Telegram:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

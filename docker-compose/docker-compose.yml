@@ -14,6 +14,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       NEXT_PUBLIC_YM_COUNTER_ID: ${NEXT_PUBLIC_YM_COUNTER_ID}
       NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
     volumes:
       - ./uploads:/app/public/uploads
     command: /bin/sh -c "npx prisma@6 db push && node server.js"
