@@ -2,6 +2,13 @@ export type Locale = "ru" | "en" | "zh";
 
 export const translations = {
   ru: {
+    blogIndex: {
+      title: "Блог и путеводитель",
+      subtitle:
+        "Полезные статьи, обзоры маршрутов, санаториев и советы для комфортных путешествий по Беларуси и Европе.",
+      articlesCount: "статей",
+      readMore: "Смотреть статьи",
+    },
     nav: {
       home: "Главная",
       calculator: "Калькулятор",
@@ -46,8 +53,9 @@ export const translations = {
       support: "Поддержка",
     },
     calculator: {
-      title: "Калькулятор стоимости",
-      subtitle: "Рассчитайте стоимость вашей поездки.",
+      title: "Калькулятор стоимости трансфера",
+      subtitle:
+        "Рассчитайте точную цену поездки из аэропорта Минск и по всей Беларуси.",
       distance: "Расстояние (км)",
       selectTariff: "Выберите тариф",
       calculate: "Рассчитать",
@@ -69,6 +77,12 @@ export const translations = {
       fromPlaceholder: "ул. Минская",
       toPlaceholder: "пр. Независимости",
       cityPlaceholder: "Минск",
+      seo_h2_1: "Как формируется цена на трансфер?",
+      seo_text_1:
+        "Наша система автоматически рассчитывает расстояние и предлагает оптимальный тариф в зависимости от выбранного класса автомобиля. В стоимость всегда включены: ожидание, помощь с багажом и комфорт в пути.",
+      seo_h2_2: "Популярные направления",
+      seo_text_2:
+        "Чаще всего наши клиенты рассчитывают стоимость поездки по маршрутам: Минск — Аэропорт, Аэропорт Минск — Брест, Минск — Гродно. Используйте калькулятор, чтобы узнать актуальную цену.",
     },
     tariffs: {
       standard: "Стандарт",
@@ -162,17 +176,33 @@ export const translations = {
     },
     contact: {
       title: "Контакты",
-      subtitle: "Мы на связи 24/7",
+      subtitle:
+        "Мы работаем 24/7 для вашего комфорта. Свяжитесь с нами удобным способом",
+      getInTouch: "Свяжитесь с нами",
       phone: "Телефон",
       email: "Email",
       address: "Адрес",
+      workingHours: "Часы работы",
+      everyDay: "Без выходных",
+      country: "Беларусь",
+      city: "Минск, Беларусь",
       messengers: "Мессенджеры",
       form: {
+        requestTitle: "Отправить запрос",
+        requestDesc: "Заполните форму и мы свяжемся с вами в течение 15 минут",
         name: "Ваше имя",
+        namePlaceholder: "Введите ваше имя",
         phone: "Телефон",
         email: "Email",
         message: "Сообщение",
+        messagePlaceholder: "Расскажите о вашей поездке...",
         submit: "Отправить заявку",
+        sending: "Отправка...",
+        success: "Успешно отправлено!",
+        successDesc: "Мы свяжемся с вами в ближайшее время",
+        error: "Ошибка",
+        errorDesc: "Не удалось отправить сообщение",
+        privacy: "Ваши данные защищены и не будут переданы третьим лицам",
       },
     },
     footer: {
@@ -209,6 +239,18 @@ export const translations = {
       },
     },
     seo: {
+      blog: {
+        title: "Блог о путешествиях, санаториях и трансферах — SKTransfer.by",
+        description:
+          "Полезные статьи для туристов: обзоры санаториев Беларуси, экскурсионные маршруты, советы по заказу трансфера и прохождению границы.",
+        keywords: [
+          "блог о путешествиях беларусь",
+          "санатории беларуси",
+          "трансфер советы",
+          "туристический путеводитель минск",
+          "достопримечательности беларуси",
+        ],
+      },
       layout: {
         keywords: [
           "трансфер Минск",
@@ -250,7 +292,7 @@ export const translations = {
         title:
           "Контакты — SKTransfer.by | Заказать трансфер +375 (29) 122-84-84",
         description:
-          "Связаться с SK Transfer: телефон +375 (29) 122-84-84, email info@sktransfer.by. Работаем 24/7 без выходных. Telegram, WhatsApp, Viber, WeChat. Офис в Минске, Беларусь. Быстрый ответ в течение нескольких минут.",
+          "Связаться с SK Transfer: телефон +375 (29) 122-84-84, email info@sktransfer.by. Работаем 24/7 без выходных. Telegram, WhatsApp, Viber, WeChat. Офис в Минске, Беларусь.",
         keywords: [
           "контакты SK Transfer",
           "телефон трансфер Минск",
@@ -343,6 +385,13 @@ export const translations = {
     },
   },
   en: {
+    blogIndex: {
+      title: "Blog & Guide",
+      subtitle:
+        "Useful articles, route reviews, sanatoriums, and tips for comfortable travel across Belarus and Europe.",
+      articlesCount: "articles",
+      readMore: "View articles",
+    },
     nav: {
       home: "Home",
       calculator: "Calculator",
@@ -387,8 +436,9 @@ export const translations = {
       support: "Support",
     },
     calculator: {
-      title: "Price Calculator",
-      subtitle: "Calculate the cost of your trip",
+      title: "Transfer Price Calculator",
+      subtitle:
+        "Calculate the exact cost of your trip from Minsk Airport and across Belarus.",
       distance: "Distance (km)",
       selectTariff: "Select tariff",
       calculate: "Calculate",
@@ -410,6 +460,12 @@ export const translations = {
       fromPlaceholder: "Minskaya Street",
       toPlaceholder: "Independence Avenue",
       cityPlaceholder: "Minsk",
+      seo_h2_1: "How is the transfer price formed?",
+      seo_text_1:
+        "Our system automatically calculates the distance and offers the best rate depending on the selected car class. The price always includes waiting time, luggage assistance, and comfort on the road.",
+      seo_h2_2: "Popular Routes",
+      seo_text_2:
+        "Most often, our clients calculate the cost of trips on the following routes: Minsk — Airport, Minsk Airport — Brest, Minsk — Grodno. Use the calculator to find the current price.",
     },
     tariffs: {
       standard: "Standard",
@@ -503,17 +559,35 @@ export const translations = {
     },
     contact: {
       title: "Contacts",
-      subtitle: "We are available 24/7",
+      subtitle:
+        "We work 24/7 for your comfort. Contact us in any convenient way",
+      getInTouch: "Get in Touch",
       phone: "Phone",
       email: "Email",
       address: "Address",
+      workingHours: "Working Hours",
+      everyDay: "Every Day",
+      country: "Belarus",
+      city: "Minsk, Belarus",
       messengers: "Messengers",
       form: {
-        name: "Your name",
+        requestTitle: "Send Request",
+        requestDesc:
+          "Fill out the form and we will contact you within 15 minutes",
+        name: "Your Name",
+        namePlaceholder: "Enter your name",
         phone: "Phone",
         email: "Email",
         message: "Message",
-        submit: "Send request",
+        messagePlaceholder: "Tell us about your trip...",
+        submit: "Send Request",
+        sending: "Sending...",
+        success: "Successfully sent!",
+        successDesc: "We will contact you shortly",
+        error: "Error",
+        errorDesc: "Failed to send message",
+        privacy:
+          "Your data is protected and will not be shared with third parties",
       },
     },
     footer: {
@@ -551,6 +625,18 @@ export const translations = {
       },
     },
     seo: {
+      blog: {
+        title: "Travel, Sanatoriums & Transfer Blog — SKTransfer.by",
+        description:
+          "Useful articles for tourists: reviews of Belarusian sanatoriums, sightseeing routes, tips on booking transfers and crossing the border.",
+        keywords: [
+          "belarus travel blog",
+          "belarus sanatoriums",
+          "transfer tips",
+          "minsk travel guide",
+          "belarus sights",
+        ],
+      },
       layout: {
         keywords: [
           "transfer Minsk",
@@ -578,25 +664,25 @@ export const translations = {
         title:
           "Transfer Cost Calculator — SKTransfer.by | Calculate Price Online",
         description:
-          "Online calculator for transfer costs in Belarus, Russia, and Europe. Find out the exact trip price in 1 minute. Minsk airport rates from 45 BYN. Transparent pricing, no hidden fees.",
+          "Online calculator for transfer costs in Belarus, Russia, and Europe. Find out the exact trip price in 1 minute. Minsk Airport fares from 45 BYN. Transparent pricing, no hidden fees.",
         keywords: [
           "transfer calculator",
           "calculate transfer cost",
-          "transfer price Minsk",
-          "airport transfer rate",
+          "Minsk transfer price",
+          "Minsk airport fare",
           "calculate transfer online",
-          "taxi cost Minsk",
+          "Minsk taxi cost",
         ],
       },
       contacts: {
-        title: "Contacts — SKTransfer.by | Book a transfer +375 (29) 122-84-84",
+        title: "Contacts — SKTransfer.by | Book a Transfer +375 (29) 122-84-84",
         description:
-          "Contact SK Transfer: phone +375 (29) 122-84-84, email info@sktransfer.by. We work 24/7. Telegram, WhatsApp, Viber, WeChat. Office in Minsk, Belarus. Quick response within minutes.",
+          "Contact SK Transfer: phone +375 (29) 122-84-84, email info@sktransfer.by. We operate 24/7. Telegram, WhatsApp, Viber, WeChat. Office in Minsk, Belarus.",
         keywords: [
           "SK Transfer contacts",
-          "phone transfer Minsk",
+          "Minsk transfer phone",
           "book transfer",
-          "transfer 24/7",
+          "24/7 transfer",
           "SK Transfer office",
         ],
       },
@@ -684,6 +770,13 @@ export const translations = {
     },
   },
   zh: {
+    blogIndex: {
+      title: "博客与指南",
+      subtitle:
+        "关于白俄罗斯和欧洲舒适旅行的有用文章、路线评论、疗养院和提示。",
+      articlesCount: "篇文章",
+      readMore: "查看文章",
+    },
     nav: {
       home: "首页",
       calculator: "计算器",
@@ -726,8 +819,8 @@ export const translations = {
       support: "支持",
     },
     calculator: {
-      title: "价格计算器",
-      subtitle: "计算您的行程费用",
+      title: "接送服务费用计算器",
+      subtitle: "计算从明斯克机场及白俄罗斯全境的准确行程价格。",
       distance: "距离（公里）",
       selectTariff: "选择套餐",
       calculate: "计算",
@@ -748,6 +841,12 @@ export const translations = {
       fromPlaceholder: "明斯克街",
       toPlaceholder: "独立大道",
       cityPlaceholder: "明斯克",
+      seo_h2_1: "接送价格是如何制定的？",
+      seo_text_1:
+        "我们的系统会自动计算距离，并根据您选择的车型提供最佳费率。价格始终包含：等待时间、行李协助以及旅途中的舒适体验。",
+      seo_h2_2: "热门路线",
+      seo_text_2:
+        "我们的客户最常计算以下路线的行程费用：明斯克 — 机场，明斯克机场 — 布列斯特，明斯克 — 格罗德诺。请使用计算器获取最新价格。",
     },
     tariffs: {
       standard: "标准",
@@ -835,18 +934,33 @@ export const translations = {
         "少于2小时取消 — 支付汽车交付费用（从明斯克10卢布，从其他地点为行程的60%）",
     },
     contact: {
-      title: "联系方式",
-      subtitle: "我们全天候为您服务",
+      title: "联系我们",
+      subtitle: "我们24/7全天候为您服务。请以任何方便的方式联系我们",
+      getInTouch: "联系我们",
       phone: "电话",
-      email: "邮箱",
+      email: "电子邮件",
       address: "地址",
-      messengers: "即时通讯",
+      workingHours: "工作时间",
+      everyDay: "每天",
+      country: "白俄罗斯",
+      city: "明斯克，白俄罗斯",
+      messengers: "通讯软件",
       form: {
+        requestTitle: "发送请求",
+        requestDesc: "填写表格，我们将在15分钟内与您联系",
         name: "您的姓名",
+        namePlaceholder: "输入您的姓名",
         phone: "电话",
-        email: "邮箱",
-        message: "留言",
+        email: "电子邮件",
+        message: "信息",
+        messagePlaceholder: "告诉我们您的旅行计划...",
         submit: "发送请求",
+        sending: "发送中...",
+        success: "发送成功！",
+        successDesc: "我们会尽快与您联系",
+        error: "错误",
+        errorDesc: "发送失败",
+        privacy: "您的数据受到保护，不会与第三方共享",
       },
     },
     footer: {
@@ -883,6 +997,18 @@ export const translations = {
       },
     },
     seo: {
+      blog: {
+        title: "旅行、疗养院与接送服务博客 — SKTransfer.by",
+        description:
+          "为游客提供的实用文章：白俄罗斯疗养院评论、观光路线、预订接送和过境提示。",
+        keywords: [
+          "白俄罗斯旅行博客",
+          "白俄罗斯疗养院",
+          "接送提示",
+          "明斯克旅游指南",
+          "白俄罗斯景点",
+        ],
+      },
       layout: {
         keywords: [
           "明斯克接送",
@@ -907,27 +1033,27 @@ export const translations = {
         ],
       },
       calculator: {
-        title: "接送费用计算器 — SKTransfer.by | 在线计算价格",
+        title: "接送服务费用计算器 — SKTransfer.by | 在线计算价格",
         description:
-          "白俄罗斯、俄罗斯和欧洲接送费用在线计算器。1分钟内找出确切的旅行价格。明斯克机场费率45 BYN起。透明定价，无隐藏费用。",
+          "白俄罗斯、俄罗斯和欧洲接送服务费用的在线计算器。1分钟内了解准确行程价格。明斯克机场票价从 45 BYN 起。透明定价，无隐藏费用。",
         keywords: [
           "接送计算器",
           "计算接送费用",
           "明斯克接送价格",
-          "机场接送费率",
+          "明斯克机场票价",
           "在线计算接送",
           "明斯克出租车费用",
         ],
       },
       contacts: {
-        title: "联系方式 — SKTransfer.by | 预订接送 +375 (29) 122-84-84",
+        title: "联系方式 — SKTransfer.by | 预订接送服务 +375 (29) 122-84-84",
         description:
-          "联系 SK Transfer：电话 +375 (29) 122-84-84，电子邮件 info@sktransfer.by。我们24/7全天候工作。Telegram，WhatsApp，Viber，WeChat。办公室位于白俄罗斯明斯克。",
+          "联系 SK Transfer：电话 +375 (29) 122-84-84，电子邮件 info@sktransfer.by。我们提供24/7全天候服务。支持 Telegram, WhatsApp, Viber, WeChat。办公室位于白俄罗斯明斯克。",
         keywords: [
           "SK Transfer 联系方式",
           "明斯克接送电话",
           "预订接送",
-          "24/7接送",
+          "24/7 接送服务",
           "SK Transfer 办公室",
         ],
       },
