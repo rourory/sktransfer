@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "./language-switcher";
+import { PhoneMobileMenuLink } from "./phone-links/phone-mobile-menu-link";
+import { PhoneLink } from "./phone-links/phone-link";
 
 interface MobileMenuModalProps {
   open: boolean;
@@ -186,21 +188,17 @@ export function MobileMenuModal({
           <div className="space-y-3 mb-8">
             <Button
               onClick={handleContactClick}
-              className="w-full gold-gradient font-semibold h-12 text-base shadow-lg shadow-[var(--gold)]/30 hover:shadow-xl hover:shadow-[var(--gold)]/40 transition-all text-muted"
+              className="cursor-pointer w-full gold-gradient font-semibold h-12 text-base shadow-lg shadow-[var(--gold)]/30 hover:shadow-xl hover:shadow-[var(--gold)]/40 transition-all text-muted"
             >
               <Sparkles className="h-5 w-5 mr-2" />
               {t.nav.contacts}
             </Button>
 
-            <a href="tel:+375291228484" className="block">
-              <Button
-                variant="outline"
-                className="w-full h-12 text-base border-[var(--gold)]/40 hover:border-[var(--gold)] hover:bg-[var(--gold)]/10 bg-white/5 text-white backdrop-blur-sm"
-              >
-                <Phone className="h-5 w-5 mr-2 text-[var(--gold)]" />
-                +375 (29) 122-84-84
-              </Button>
-            </a>
+            <PhoneMobileMenuLink
+              className="block"
+              phoneNumber="+375291228484"
+              displayPhoneNumber="+375 (29) 122-84-84"
+            />
           </div>
 
           {/* Updated Contact Info */}
@@ -212,12 +210,11 @@ export function MobileMenuModal({
               <div className="flex items-start gap-3">
                 <Phone className="h-4 w-4 text-[var(--gold)] mt-0.5 flex-shrink-0" />
                 <div className="text-sm text-white/90">
-                  <a
-                    href="tel:+375291228484"
-                    className="hover:text-[var(--gold-light)] transition-colors"
-                  >
-                    +375 (29) 122-84-84
-                  </a>
+                  <PhoneLink
+                    phoneNumber="+375291228484"
+                    displayPhoneNumber="+375 (29) 122-84-84"
+                    className="hover:text-(--gold-light) transition-colors"
+                  />
                 </div>
               </div>
               <div className="flex items-start gap-3">

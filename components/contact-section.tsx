@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { type Locale, translations } from "@/lib/i18n"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
-import { useToast } from "@/hooks/use-toast"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import type React from "react";
+import { type Locale, translations } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPhone,
   faEnvelope,
@@ -15,27 +15,33 @@ import {
   faClock,
   faPaperPlane,
   faCheckCircle,
-} from "@fortawesome/free-solid-svg-icons"
-import { faTelegram, faWhatsapp, faViber, faWeixin } from "@fortawesome/free-brands-svg-icons"
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faTelegram,
+  faWhatsapp,
+  faViber,
+  faWeixin,
+} from "@fortawesome/free-brands-svg-icons";
+import { PhoneLink } from "./phone-links/phone-link";
 
 interface ContactSectionProps {
-  locale: Locale
+  locale: Locale;
 }
 
 export function ContactSection({ locale }: ContactSectionProps) {
-  const t = translations[locale]
-  const { toast } = useToast()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const t = translations[locale];
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     message: "",
-  })
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/send-telegram", {
@@ -48,33 +54,42 @@ export function ContactSection({ locale }: ContactSectionProps) {
           message: formData.message,
           type: "contact_form",
         }),
-      })
+      });
 
       if (response.ok) {
         toast({
-          title: locale === "ru" ? "Успешно отправлено!" : locale === "en" ? "Successfully sent!" : "发送成功！",
+          title:
+            locale === "ru"
+              ? "Успешно отправлено!"
+              : locale === "en"
+                ? "Successfully sent!"
+                : "发送成功！",
           description:
             locale === "ru"
               ? "Мы свяжемся с вами в ближайшее время"
               : locale === "en"
                 ? "We will contact you shortly"
                 : "我们会尽快与您联系",
-        })
-        setFormData({ name: "", phone: "", email: "", message: "" })
+        });
+        setFormData({ name: "", phone: "", email: "", message: "" });
       } else {
-        throw new Error("Failed to send")
+        throw new Error("Failed to send");
       }
     } catch (error) {
       toast({
         title: locale === "ru" ? "Ошибка" : locale === "en" ? "Error" : "错误",
         description:
-          locale === "ru" ? "Не удалось отправить сообщение" : locale === "en" ? "Failed to send message" : "发送失败",
+          locale === "ru"
+            ? "Не удалось отправить сообщение"
+            : locale === "en"
+              ? "Failed to send message"
+              : "发送失败",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const messengers = [
     {
@@ -105,7 +120,7 @@ export function ContactSection({ locale }: ContactSectionProps) {
       color: "from-[#09B83E] to-[#07a037]",
       hoverColor: "hover:shadow-[#09B83E]/50",
     },
-  ]
+  ];
 
   return (
     <section className="relative min-h-screen py-20 md:py-28 bg-gradient-to-br from-gray-50 via-white to-gray-100">
@@ -123,9 +138,16 @@ export function ContactSection({ locale }: ContactSectionProps) {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16 space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--gold)]/10 to-[var(--platinum)]/10 rounded-full mb-4">
-              <FontAwesomeIcon icon={faPhone} className="text-[var(--gold)] text-sm" />
+              <FontAwesomeIcon
+                icon={faPhone}
+                className="text-[var(--gold)] text-sm"
+              />
               <span className="text-sm font-medium text-gray-700">
-                {locale === "ru" ? "Свяжитесь с нами" : locale === "en" ? "Get in Touch" : "联系我们"}
+                {locale === "ru"
+                  ? "Свяжитесь с нами"
+                  : locale === "en"
+                    ? "Get in Touch"
+                    : "联系我们"}
               </span>
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
@@ -148,20 +170,26 @@ export function ContactSection({ locale }: ContactSectionProps) {
               <div className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-[var(--gold)] to-[var(--gold)]/80 flex items-center justify-center shadow-lg shadow-[var(--gold)]/20 group-hover:scale-110 transition-transform">
-                    <FontAwesomeIcon icon={faPhone} className="text-white text-xl" />
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      className="text-white text-xl"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                       {t.contact.phone}
                     </h3>
-                    <a
-                      href="tel:+375291228484"
+                    <PhoneLink
                       className="text-xl font-bold text-gray-900 hover:text-[var(--gold)] transition-colors block"
-                    >
-                      +375 (29) 122-84-84
-                    </a>
+                      phoneNumber="+375291228484"
+                      displayPhoneNumber="+375 (29) 122-84-84"
+                    />
                     <p className="text-sm text-gray-500 mt-1">
-                      {locale === "ru" ? "Беларусь" : locale === "en" ? "Belarus" : "白俄罗斯"}
+                      {locale === "ru"
+                        ? "Беларусь"
+                        : locale === "en"
+                          ? "Belarus"
+                          : "白俄罗斯"}
                     </p>
                   </div>
                 </div>
@@ -171,7 +199,10 @@ export function ContactSection({ locale }: ContactSectionProps) {
               <div className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-                    <FontAwesomeIcon icon={faEnvelope} className="text-white text-xl" />
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      className="text-white text-xl"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
@@ -191,14 +222,21 @@ export function ContactSection({ locale }: ContactSectionProps) {
               <div className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
-                    <FontAwesomeIcon icon={faMapMarkerAlt} className="text-white text-xl" />
+                    <FontAwesomeIcon
+                      icon={faMapMarkerAlt}
+                      className="text-white text-xl"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                       {t.contact.address}
                     </h3>
                     <p className="text-lg font-semibold text-gray-900">
-                      {locale === "ru" ? "Минск, Беларусь" : locale === "en" ? "Minsk, Belarus" : "明斯克，白俄罗斯"}
+                      {locale === "ru"
+                        ? "Минск, Беларусь"
+                        : locale === "en"
+                          ? "Minsk, Belarus"
+                          : "明斯克，白俄罗斯"}
                     </p>
                   </div>
                 </div>
@@ -208,15 +246,26 @@ export function ContactSection({ locale }: ContactSectionProps) {
               <div className="group bg-gradient-to-br from-[var(--gold)] to-[var(--gold)]/90 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="flex items-start gap-4">
                   <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <FontAwesomeIcon icon={faClock} className="text-white text-xl" />
+                    <FontAwesomeIcon
+                      icon={faClock}
+                      className="text-white text-xl"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider mb-2">
-                      {locale === "ru" ? "Часы работы" : locale === "en" ? "Working Hours" : "工作时间"}
+                      {locale === "ru"
+                        ? "Часы работы"
+                        : locale === "en"
+                          ? "Working Hours"
+                          : "工作时间"}
                     </h3>
                     <p className="text-2xl font-bold text-white">24/7</p>
                     <p className="text-sm text-white/90 mt-1">
-                      {locale === "ru" ? "Без выходных" : locale === "en" ? "Every Day" : "每天"}
+                      {locale === "ru"
+                        ? "Без выходных"
+                        : locale === "en"
+                          ? "Every Day"
+                          : "每天"}
                     </p>
                   </div>
                 </div>
@@ -224,7 +273,10 @@ export function ContactSection({ locale }: ContactSectionProps) {
 
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <FontAwesomeIcon icon={faTelegram} className="text-[var(--gold)]" />
+                  <FontAwesomeIcon
+                    icon={faTelegram}
+                    className="text-[var(--gold)]"
+                  />
                   {t.contact.messengers}
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -240,7 +292,9 @@ export function ContactSection({ locale }: ContactSectionProps) {
                         icon={messenger.icon}
                         className="text-2xl group-hover:scale-110 transition-transform"
                       />
-                      <span className="text-sm font-semibold">{messenger.name}</span>
+                      <span className="text-sm font-semibold">
+                        {messenger.name}
+                      </span>
                     </a>
                   ))}
                 </div>
@@ -251,7 +305,11 @@ export function ContactSection({ locale }: ContactSectionProps) {
               <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-gray-100">
                 <div className="mb-8">
                   <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                    {locale === "ru" ? "Отправить запрос" : locale === "en" ? "Send Request" : "发送请求"}
+                    {locale === "ru"
+                      ? "Отправить запрос"
+                      : locale === "en"
+                        ? "Send Request"
+                        : "发送请求"}
                   </h2>
                   <p className="text-gray-600">
                     {locale === "ru"
@@ -265,14 +323,21 @@ export function ContactSection({ locale }: ContactSectionProps) {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {t.contact.form.name} <span className="text-red-500">*</span>
+                      {t.contact.form.name}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <Input
                       placeholder={
-                        locale === "ru" ? "Введите ваше имя" : locale === "en" ? "Enter your name" : "输入您的姓名"
+                        locale === "ru"
+                          ? "Введите ваше имя"
+                          : locale === "en"
+                            ? "Enter your name"
+                            : "输入您的姓名"
                       }
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       required
                       className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--gold)] focus:ring-[var(--gold)]"
                     />
@@ -280,13 +345,16 @@ export function ContactSection({ locale }: ContactSectionProps) {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {t.contact.form.phone} <span className="text-red-500">*</span>
+                      {t.contact.form.phone}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <Input
                       type="tel"
                       placeholder="+375 (__) ___-__-__"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
                       required
                       className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--gold)] focus:ring-[var(--gold)]"
                     />
@@ -294,15 +362,22 @@ export function ContactSection({ locale }: ContactSectionProps) {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {t.contact.form.email} <span className="text-red-500">*</span>
+                      {t.contact.form.email}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <Input
                       type="email"
                       placeholder={
-                        locale === "ru" ? "example@mail.com" : locale === "en" ? "example@mail.com" : "example@mail.com"
+                        locale === "ru"
+                          ? "example@mail.com"
+                          : locale === "en"
+                            ? "example@mail.com"
+                            : "example@mail.com"
                       }
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       required
                       className="h-12 bg-gray-50 border-gray-200 focus:border-[var(--gold)] focus:ring-[var(--gold)]"
                     />
@@ -310,7 +385,8 @@ export function ContactSection({ locale }: ContactSectionProps) {
 
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {t.contact.form.message} <span className="text-red-500">*</span>
+                      {t.contact.form.message}{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <Textarea
                       placeholder={
@@ -321,7 +397,9 @@ export function ContactSection({ locale }: ContactSectionProps) {
                             : "告诉我们您的旅行..."
                       }
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
                       required
                       rows={6}
                       className="resize-none bg-gray-50 border-gray-200 focus:border-[var(--gold)] focus:ring-[var(--gold)]"
@@ -337,7 +415,11 @@ export function ContactSection({ locale }: ContactSectionProps) {
                     {isSubmitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                        {locale === "ru" ? "Отправка..." : locale === "en" ? "Sending..." : "发送中..."}
+                        {locale === "ru"
+                          ? "Отправка..."
+                          : locale === "en"
+                            ? "Sending..."
+                            : "发送中..."}
                       </>
                     ) : (
                       <>
@@ -351,7 +433,10 @@ export function ContactSection({ locale }: ContactSectionProps) {
                   </Button>
 
                   <div className="flex items-start gap-2 text-sm text-gray-500 bg-gray-50 p-4 rounded-xl">
-                    <FontAwesomeIcon icon={faCheckCircle} className="text-green-500 mt-0.5 flex-shrink-0" />
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      className="text-green-500 mt-0.5 flex-shrink-0"
+                    />
                     <p>
                       {locale === "ru"
                         ? "Ваши данные защищены и не будут переданы третьим лицам"
@@ -367,5 +452,5 @@ export function ContactSection({ locale }: ContactSectionProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

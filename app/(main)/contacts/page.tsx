@@ -16,6 +16,7 @@ import {
   faWeixin,
 } from "@fortawesome/free-brands-svg-icons";
 import { ContactForm } from "@/components/contact-form";
+import { PhoneLink } from "@/components/phone-links/phone-link";
 
 const BASE_URL = "https://sktransfer.by";
 
@@ -170,12 +171,11 @@ export default async function ContactsPage() {
                     <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                       {tContact.phone}
                     </h2>
-                    <a
-                      href="tel:+375291228484"
+                    <PhoneLink
+                      phoneNumber="+375291228484"
+                      displayPhoneNumber="+375 (29) 122-84-84"
                       className="text-xl font-bold text-gray-900 hover:text-[var(--gold)] transition-colors block"
-                    >
-                      +375 (29) 122-84-84
-                    </a>
+                    />
                     <p className="text-sm text-gray-500 mt-1">
                       {tContact.country}
                     </p>

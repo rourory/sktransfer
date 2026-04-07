@@ -1,15 +1,31 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { useState, useRef, useEffect } from "react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { MapPin, Calculator, Sparkles, TrendingUp, Clock, CheckCircle2 } from "lucide-react"
-import { type Locale, translations } from "@/lib/i18n"
-import { BookingModal } from "./booking-modal"
+import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  MapPin,
+  Calculator,
+  Sparkles,
+  TrendingUp,
+  Clock,
+  CheckCircle2,
+} from "lucide-react";
+import { type Locale, translations } from "@/lib/i18n";
+import { BookingModal } from "./booking-modal";
+
+// Динамический импорт карты без SSR
+const RouteMap = dynamic(() => import("../components/route-map"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[300px] w-full rounded-lg bg-gray-100 animate-pulse border-2 border-gray-200" />
+  ),
+});
 
 const TARIFFS = {
   standard: { price: 1.3, icon: "🚗", color: "from-gray-500 to-gray-600" },
@@ -18,174 +34,250 @@ const TARIFFS = {
   minivan: { price: 2.2, icon: "🚐", color: "from-green-500 to-green-600" },
   vip: { price: 3.0, icon: "👑", color: "from-purple-500 to-purple-600" },
   minibus: { price: 3.0, icon: "🚌", color: "from-red-500 to-red-600" },
-}
+};
 
 interface CalculatorFormProps {
-  locale: Locale
+  locale: Locale;
 }
 
 interface AddressSuggestion {
-  display_name: string
-  lat: string
-  lon: string
+  display_name: string;
+  lat: number;
+  lon: number;
 }
 
 export function CalculatorForm({ locale }: CalculatorFormProps) {
-  const [from, setFrom] = useState("")
-  const [to, setTo] = useState("")
-  const [distance, setDistance] = useState("")
-  const [fromSuggestions, setFromSuggestions] = useState<AddressSuggestion[]>([])
-  const [toSuggestions, setToSuggestions] = useState<AddressSuggestion[]>([])
-  const [showFromSuggestions, setShowFromSuggestions] = useState(false)
-  const [showToSuggestions, setShowToSuggestions] = useState(false)
-  const [fromCoords, setFromCoords] = useState<{ lat: number; lon: number } | null>(null)
-  const [toCoords, setToCoords] = useState<{ lat: number; lon: number } | null>(null)
-  const [isCityTour, setIsCityTour] = useState(false)
-  const [selectedCity, setSelectedCity] = useState("")
-  const fromInputRef = useRef<HTMLDivElement>(null)
-  const toInputRef = useRef<HTMLDivElement>(null)
-  const [selectedTariff, setSelectedTariff] = useState<keyof typeof TARIFFS | null>(null)
-  const [results, setResults] = useState<Record<string, number> | null>(null)
-  const [isCalculating, setIsCalculating] = useState(false)
-  const [bookingModalOpen, setBookingModalOpen] = useState(false)
-  const [selectedBookingTariff, setSelectedBookingTariff] = useState<string>("")
-  const router = useRouter()
-  const searchTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [distance, setDistance] = useState("");
+  const [fromSuggestions, setFromSuggestions] = useState<AddressSuggestion[]>(
+    [],
+  );
+  const [toSuggestions, setToSuggestions] = useState<AddressSuggestion[]>([]);
+  const [showFromSuggestions, setShowFromSuggestions] = useState(false);
+  const [showToSuggestions, setShowToSuggestions] = useState(false);
 
-  const t = translations[locale]
+  const [fromCoords, setFromCoords] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
+  const [toCoords, setToCoords] = useState<{ lat: number; lon: number } | null>(
+    null,
+  );
+  const [routeLine, setRouteLine] = useState<[number, number][] | null>(null);
+
+  const [isCityTour, setIsCityTour] = useState(false);
+  const fromInputRef = useRef<HTMLDivElement>(null);
+  const toInputRef = useRef<HTMLDivElement>(null);
+  const [selectedTariff, setSelectedTariff] = useState<
+    keyof typeof TARIFFS | null
+  >(null);
+  const [results, setResults] = useState<Record<string, number> | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [selectedBookingTariff, setSelectedBookingTariff] =
+    useState<string>("");
+  const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const t = translations[locale];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (fromInputRef.current && !fromInputRef.current.contains(event.target as Node)) {
-        setShowFromSuggestions(false)
+      if (
+        fromInputRef.current &&
+        !fromInputRef.current.contains(event.target as Node)
+      ) {
+        setShowFromSuggestions(false);
       }
-      if (toInputRef.current && !toInputRef.current.contains(event.target as Node)) {
-        setShowToSuggestions(false)
+      if (
+        toInputRef.current &&
+        !toInputRef.current.contains(event.target as Node)
+      ) {
+        setShowToSuggestions(false);
       }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Форматирование адреса из ответа Nominatim
+  const formatNominatimAddress = (address: any, name: string) => {
+    const parts = [];
+
+    // Если есть дорога и номер дома
+    if (address.road) {
+      let street = address.road;
+      if (address.house_number) street += `, ${address.house_number}`;
+      parts.push(street);
+    } else if (name) {
+      // Иначе берем название объекта (Аэропорт и тд)
+      parts.push(name);
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    // Добавляем город
+    const city = address.city || address.town || address.village;
+    if (city && city !== name) {
+      parts.push(city);
+    }
 
-  const fetchAddressSuggestions = async (query: string, isFromField: boolean) => {
+    return parts.length > 0 ? parts.join(", ") : "Неизвестный адрес";
+  };
+
+  // Умный поиск Nominatim
+  const fetchAddressSuggestions = async (
+    query: string,
+    isFromField: boolean,
+  ) => {
     if (query.length < 3) {
       if (isFromField) {
-        setFromSuggestions([])
-        setShowFromSuggestions(false)
+        setFromSuggestions([]);
+        setShowFromSuggestions(false);
       } else {
-        setToSuggestions([])
-        setShowToSuggestions(false)
+        setToSuggestions([]);
+        setShowToSuggestions(false);
       }
-      return
+      return;
     }
 
-    // Clear previous timer
-    if (searchTimerRef.current) {
-      clearTimeout(searchTimerRef.current)
-    }
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
 
-    // Debounce the search
     searchTimerRef.current = setTimeout(async () => {
       try {
-        // Using proper headers and params for Nominatim API
+        // Делаем строку понятнее для API: "Хоружей 10" превращаем в "Хоружей, 10"
+        const smartQuery = query.replace(/([а-яА-Яa-zA-Z])\s+(\d+)/g, "$1, $2");
+
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?` +
             new URLSearchParams({
               format: "json",
-              q: `${query}, Belarus`,
-              limit: "8",
+              q: smartQuery,
+              limit: "5",
               addressdetails: "1",
               "accept-language": locale === "ru" ? "ru" : "en",
+              // Ограничиваем поиск Беларусью и странами соседями для максимальной точности
+              countrycodes: "by,ru,pl,lt,lv",
             }),
           {
             headers: {
-              "User-Agent": "SKTransfer.by",
+              // Nominatim требует User-Agent для бесплатных запросов
+              "User-Agent": "SKTransfer.by (taxi booking service)",
             },
           },
-        )
+        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
 
-        const data = await response.json()
+        const suggestions: AddressSuggestion[] = data.map((item: any) => ({
+          display_name: formatNominatimAddress(item.address, item.name),
+          lat: Number(item.lat),
+          lon: Number(item.lon),
+        }));
+
+        // Убираем дубликаты
+        const uniqueSuggestions = suggestions.filter(
+          (v, i, a) =>
+            a.findIndex((t) => t.display_name === v.display_name) === i,
+        );
 
         if (isFromField) {
-          setFromSuggestions(data)
-          setShowFromSuggestions(data.length > 0)
+          setFromSuggestions(uniqueSuggestions);
+          setShowFromSuggestions(uniqueSuggestions.length > 0);
         } else {
-          setToSuggestions(data)
-          setShowToSuggestions(data.length > 0)
+          setToSuggestions(uniqueSuggestions);
+          setShowToSuggestions(uniqueSuggestions.length > 0);
         }
       } catch (error) {
-        console.error("[v0] Error fetching addresses:", error)
-        // Reset suggestions on error
-        if (isFromField) {
-          setFromSuggestions([])
-          setShowFromSuggestions(false)
-        } else {
-          setToSuggestions([])
-          setShowToSuggestions(false)
-        }
+        console.error("Error fetching addresses:", error);
       }
-    }, 300) // 300ms debounce delay
-  }
+    }, 500); // 500ms задержка, чтобы не спамить сервер OSM
+  };
 
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371 // Earth's radius in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180
-    const dLon = ((lon2 - lon1) * Math.PI) / 180
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-    return R * c
-  }
+  // Построение маршрута по дорогам через OSRM
+  const fetchRouteAndDistance = async (
+    startLat: number,
+    startLon: number,
+    endLat: number,
+    endLon: number,
+  ) => {
+    try {
+      const res = await fetch(
+        `https://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`,
+      );
+      const data = await res.json();
+
+      if (data.code === "Ok" && data.routes.length > 0) {
+        const route = data.routes[0];
+
+        const distanceKm = (route.distance / 1000).toFixed(1);
+        setDistance(distanceKm);
+
+        const coordinates = route.geometry.coordinates.map(
+          (coord: number[]) => [coord[1], coord[0]] as [number, number],
+        );
+        setRouteLine(coordinates);
+      }
+    } catch (error) {
+      console.error("Route calculation error:", error);
+    }
+  };
 
   useEffect(() => {
     if (fromCoords && toCoords && !isCityTour) {
-      const dist = calculateDistance(fromCoords.lat, fromCoords.lon, toCoords.lat, toCoords.lon)
-      setDistance(Math.round(dist).toString())
-    }
-  }, [fromCoords, toCoords, isCityTour])
-
-  const handleAddressSelect = (suggestion: AddressSuggestion, isFromField: boolean) => {
-    if (isFromField) {
-      setFrom(suggestion.display_name)
-      setFromCoords({ lat: Number.parseFloat(suggestion.lat), lon: Number.parseFloat(suggestion.lon) })
-      setShowFromSuggestions(false)
+      fetchRouteAndDistance(
+        fromCoords.lat,
+        fromCoords.lon,
+        toCoords.lat,
+        toCoords.lon,
+      );
     } else {
-      setTo(suggestion.display_name)
-      setToCoords({ lat: Number.parseFloat(suggestion.lat), lon: Number.parseFloat(suggestion.lon) })
-      setShowToSuggestions(false)
+      setRouteLine(null);
     }
-  }
+  }, [fromCoords, toCoords, isCityTour]);
+
+  const handleAddressSelect = (
+    suggestion: AddressSuggestion,
+    isFromField: boolean,
+  ) => {
+    if (isFromField) {
+      setFrom(suggestion.display_name);
+      setFromCoords({ lat: suggestion.lat, lon: suggestion.lon });
+      setShowFromSuggestions(false);
+    } else {
+      setTo(suggestion.display_name);
+      setToCoords({ lat: suggestion.lat, lon: suggestion.lon });
+      setShowToSuggestions(false);
+    }
+    setResults(null);
+  };
 
   const handleCityTourToggle = (checked: boolean) => {
-    setIsCityTour(checked)
+    setIsCityTour(checked);
     if (checked) {
-      setTo("")
-      setToCoords(null)
-      setDistance("")
+      setTo("");
+      setToCoords(null);
+      setDistance("");
+      setRouteLine(null);
+      setResults(null);
     }
-  }
+  };
 
   const calculateAllPrices = () => {
-    const dist = Number.parseFloat(distance)
-    if (isNaN(dist) || dist <= 0) return
+    const dist = Number.parseFloat(distance);
+    if (isNaN(dist) || dist <= 0) return;
 
-    setIsCalculating(true)
+    setIsCalculating(true);
 
     setTimeout(() => {
-      const calculatedResults: Record<string, number> = {}
+      const calculatedResults: Record<string, number> = {};
       Object.entries(TARIFFS).forEach(([key, tariff]) => {
-        calculatedResults[key] = dist * tariff.price
-      })
-      setResults(calculatedResults)
-      setIsCalculating(false)
-    }, 300)
-  }
+        calculatedResults[key] = dist * tariff.price;
+      });
+      setResults(calculatedResults);
+      setIsCalculating(false);
+    }, 300);
+  };
 
   const handleBooking = (tariffKey: string) => {
     const tariffNames: Record<string, string> = {
@@ -195,18 +287,16 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
       minivan: t.tariffs.minivan,
       vip: t.tariffs.vip,
       minibus: t.tariffs.minibus,
-    }
-    setSelectedBookingTariff(tariffNames[tariffKey] || tariffKey)
-    setBookingModalOpen(true)
-  }
+    };
+    setSelectedBookingTariff(tariffNames[tariffKey] || tariffKey);
+    setBookingModalOpen(true);
+  };
 
   useEffect(() => {
     return () => {
-      if (searchTimerRef.current) {
-        clearTimeout(searchTimerRef.current)
-      }
-    }
-  }, [])
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    };
+  }, []);
 
   return (
     <>
@@ -220,11 +310,21 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold gold-gradient-text break-words whitespace-normal">
                 {t.calculator.title}
               </h3>
-              <p className="text-xs sm:text-sm text-gray-600 break-words whitespace-normal">{t.calculator.subtitle}</p>
+              <p className="text-xs sm:text-sm text-gray-600 break-words whitespace-normal">
+                {t.calculator.subtitle}
+              </p>
             </div>
           </div>
 
           <div className="space-y-4 sm:space-y-5">
+            <div className="mb-6">
+              <RouteMap
+                fromCoords={fromCoords}
+                toCoords={toCoords}
+                routeLine={routeLine}
+              />
+            </div>
+
             <div className="flex items-center space-x-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
               <Checkbox
                 id="cityTour"
@@ -243,15 +343,21 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
             <div className="space-y-2" ref={fromInputRef}>
               <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <MapPin className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
-                <span className="truncate">{isCityTour ? t.calculator.city : t.calculator.from}</span>
+                <span className="truncate">
+                  {isCityTour ? t.calculator.city : t.calculator.from}
+                </span>
               </Label>
               <div className="relative">
                 <Input
-                  placeholder={isCityTour ? t.calculator.cityPlaceholder : t.calculator.fromPlaceholder}
+                  placeholder={
+                    isCityTour
+                      ? t.calculator.cityPlaceholder
+                      : "Минск, пр. Независимости, 115"
+                  }
                   value={from}
                   onChange={(e) => {
-                    setFrom(e.target.value)
-                    fetchAddressSuggestions(e.target.value, true)
+                    setFrom(e.target.value);
+                    fetchAddressSuggestions(e.target.value, true);
                   }}
                   className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] transition-colors w-full bg-white text-gray-900"
                 />
@@ -265,7 +371,9 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
                         onClick={() => handleAddressSelect(suggestion, true)}
                         className="p-3 hover:bg-amber-50 cursor-pointer border-b last:border-b-0 transition-colors"
                       >
-                        <p className="text-sm text-gray-900">{suggestion.display_name}</p>
+                        <p className="text-sm text-gray-900">
+                          {suggestion.display_name}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -281,11 +389,11 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
                 </Label>
                 <div className="relative">
                   <Input
-                    placeholder={t.calculator.toPlaceholder}
+                    placeholder={"Аэропорт Вильнюс"}
                     value={to}
                     onChange={(e) => {
-                      setTo(e.target.value)
-                      fetchAddressSuggestions(e.target.value, false)
+                      setTo(e.target.value);
+                      fetchAddressSuggestions(e.target.value, false);
                     }}
                     className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] transition-colors w-full bg-white text-gray-900"
                   />
@@ -299,7 +407,9 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
                           onClick={() => handleAddressSelect(suggestion, false)}
                           className="p-3 hover:bg-amber-50 cursor-pointer border-b last:border-b-0 transition-colors"
                         >
-                          <p className="text-sm text-gray-900">{suggestion.display_name}</p>
+                          <p className="text-sm text-gray-900">
+                            {suggestion.display_name}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -315,14 +425,16 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               </Label>
               <div className="relative">
                 <Input
-                  type="number"
-                  placeholder="350"
+                  type="text"
+                  readOnly
+                  placeholder="Рассчитывается автоматически..."
                   value={distance}
-                  onChange={(e) => setDistance(e.target.value)}
-                  className="pl-10 pr-12 border-2 border-gray-200 focus:border-[var(--gold)] transition-colors text-base sm:text-lg font-semibold w-full bg-white text-gray-900"
+                  className="pl-10 pr-12 border-2 border-gray-200 bg-gray-50 cursor-not-allowed text-base sm:text-lg font-semibold w-full text-gray-900 focus-visible:ring-0 focus-visible:border-gray-200"
                 />
                 <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)]/50" />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600">км</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600">
+                  км
+                </span>
               </div>
             </div>
 
@@ -347,19 +459,23 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
         </Card>
 
         {results && (
-          <div className="grid gap-3 sm:gap-4 w-full">
+          <div className="grid gap-3 sm:gap-4 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="text-center mb-2">
               <h4 className="text-base sm:text-lg md:text-xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
                 <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                <span className="truncate">{t.calculator.tariffComparison}</span>
+                <span className="truncate">
+                  {t.calculator.tariffComparison}
+                </span>
               </h4>
-              <p className="text-xs sm:text-sm text-gray-600 px-4">{t.calculator.chooseBestOption}</p>
+              <p className="text-xs sm:text-sm text-gray-600 px-4">
+                {t.calculator.chooseBestOption}
+              </p>
             </div>
 
             {Object.entries(TARIFFS).map(([key, tariff]) => {
-              const price = results[key]
-              const isSelected = selectedTariff === key
-              const tariffKey = key as keyof typeof TARIFFS
+              const price = results[key];
+              const isSelected = selectedTariff === key;
+              const tariffKey = key as keyof typeof TARIFFS;
 
               return (
                 <Card
@@ -392,15 +508,17 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
                       <div className="text-xl sm:text-2xl md:text-3xl font-bold gold-gradient-text">
                         {price.toFixed(2)}
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">BYN</div>
+                      <div className="text-xs sm:text-sm text-gray-600">
+                        BYN
+                      </div>
                     </div>
                   </div>
 
                   {isSelected && (
                     <Button
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleBooking(key)
+                        e.stopPropagation();
+                        handleBooking(key);
                       }}
                       className="w-full mt-3 sm:mt-4 gold-gradient hover:opacity-90 transition-opacity text-sm sm:text-base py-2 sm:py-3 text-white"
                     >
@@ -409,14 +527,16 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
                     </Button>
                   )}
                 </Card>
-              )
+              );
             })}
           </div>
         )}
 
         {results && (
           <div className="mt-4 p-4 rounded-lg bg-amber-50 border-2 border-amber-200">
-            <p className="text-xs sm:text-sm text-gray-900 text-center">ⓘ {t.calculator.priceDisclaimer}</p>
+            <p className="text-xs sm:text-sm text-gray-900 text-center">
+              ⓘ {t.calculator.priceDisclaimer}
+            </p>
           </div>
         )}
       </div>
@@ -431,5 +551,5 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
         to={to}
       />
     </>
-  )
+  );
 }
