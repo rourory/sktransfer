@@ -3,6 +3,7 @@ import { getLocaleOnServer } from "@/lib/get-locale-on-server";
 import { translations } from "@/lib/i18n";
 import { CalculatorForm } from "@/components/calculator-form";
 import { AirportTariffs } from "@/components/airport-tariffs";
+import prisma from "@/lib/prisma";
 
 const BASE_URL = "https://sktransfer.by";
 
@@ -50,6 +51,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CalculatorPage() {
   const locale = await getLocaleOnServer();
   const t = translations[locale];
+
+  const dbTariffs = await prisma.tariff.findMany({
+    where: { isActive: true },
+    orderBy: { order: "asc" },
+  });
 
   const pageUrl =
     locale === "ru"
@@ -110,7 +116,7 @@ export default async function CalculatorPage() {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-16">
-              <CalculatorForm locale={locale} />
+              <CalculatorForm locale={locale} dbTariffs={dbTariffs}/>
               <AirportTariffs locale={locale} />
             </div>
 

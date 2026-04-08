@@ -1,5 +1,6 @@
+// app/sitemap.ts
 import { MetadataRoute } from "next";
-import prisma from "@/lib/prisma"; // Проверь правильность пути к твоему prisma клиенту
+import prisma from "@/lib/prisma";
 
 const BASE_URL = "https://sktransfer.by";
 const LOCALES = ["ru", "en", "zh"];
@@ -8,7 +9,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 1. Массив статических роутов
+  const sitemapEntries: MetadataRoute.Sitemap = [];
+
+  // ====================== 1. Статические страницы ======================
   const staticRoutes = [
     "",
     "/services",
@@ -23,13 +26,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/blog",
   ];
 
-  const sitemapEntries: MetadataRoute.Sitemap = [];
-
-  // Функция-помощник для добавления локализованных версий ссылок
-  // Для ru отдаем чистый URL, для en/zh добавляем параметр ?lang=
   const addLocalizedEntries = (
     path: string,
-    lastModified: Date,
+    lastModified: Date = new Date(),
     changeFrequency:
       | "always"
       | "hourly"
@@ -37,8 +36,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       | "weekly"
       | "monthly"
       | "yearly"
-      | "never",
-    priority: number,
+      | "never" = "weekly",
+    priority: number = 0.8,
   ) => {
     LOCALES.forEach((locale) => {
       const url =
@@ -57,16 +56,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Добавляем статические страницы
   staticRoutes.forEach((route) => {
-    addLocalizedEntries(
-      route,
-      new Date(), // В идеале здесь должна быть дата последнего деплоя/обновления
-      "weekly",
-      route === "" ? 1.0 : 0.8, // Главной странице даем максимальный приоритет
-    );
+    addLocalizedEntries(route, new Date(), "weekly", route === "" ? 1.0 : 0.8);
   });
 
+  // ====================== 2. Динамические страницы трансферов ======================
   try {
-    // 2. Достаем категории из БД
+    const transferRoutes = await prisma.transferRoute.findMany({
+      select: {
+        slug: true,
+        updatedAt: true,
+        isPopular: true,
+      },
+      where: {
+        // Можно добавить фильтр, если хочешь показывать только популярные
+        // isPopular: true,
+      },
+    });
+
+    transferRoutes.forEach((route) => {
+      const priority = route.isPopular ? 0.85 : 0.75;
+      addLocalizedEntries(
+        `/transfer/${route.slug}`,
+        route.updatedAt,
+        "monthly", // трансферы меняются не очень часто
+        priority,
+      );
+    });
+
+    console.log(
+      `✅ Добавлено ${transferRoutes.length} динамических страниц трансферов в sitemap`,
+    );
+  } catch (error) {
+    console.error("Ошибка при получении TransferRoute для sitemap:", error);
+  }
+
+  // ====================== 3. Категории блога ======================
+  try {
     const categories = await prisma.category.findMany({
       select: { slug: true, updatedAt: true },
     });
@@ -79,8 +104,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         0.7,
       );
     });
+  } catch (error) {
+    console.error("Ошибка при получении категорий:", error);
+  }
 
-    // 3. Достаем опубликованные статьи из БД
+  // ====================== 4. Статьи блога ======================
+  try {
     const articles = await prisma.article.findMany({
       where: { isPublished: true },
       select: {
@@ -96,13 +125,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       addLocalizedEntries(
         `/blog/${article.category.slug}/${article.slug}`,
         article.updatedAt,
-        "monthly", // Статьи обычно меняются реже
+        "monthly",
         0.6,
       );
     });
   } catch (error) {
-    console.error("Ошибка при генерации sitemap:", error);
-    // Даже если БД упала, мы всё равно вернем хотя бы статические страницы
+    console.error("Ошибка при получении статей:", error);
   }
 
   return sitemapEntries;

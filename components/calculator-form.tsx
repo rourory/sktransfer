@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,11 +16,13 @@ import {
   TrendingUp,
   Clock,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
+
 import { type Locale, translations } from "@/lib/i18n";
 import { BookingModal } from "./booking-modal";
 
-// Динамический импорт карты без SSR
+// Динамический импорт карты
 const RouteMap = dynamic(() => import("../components/route-map"), {
   ssr: false,
   loading: () => (
@@ -27,17 +30,25 @@ const RouteMap = dynamic(() => import("../components/route-map"), {
   ),
 });
 
-const TARIFFS = {
-  standard: { price: 1.3, icon: "🚗", color: "from-gray-500 to-gray-600" },
-  comfort: { price: 1.5, icon: "✨", color: "from-blue-500 to-blue-600" },
-  business: { price: 3.0, icon: "💼", color: "from-amber-500 to-amber-600" },
-  minivan: { price: 2.2, icon: "🚐", color: "from-green-500 to-green-600" },
-  vip: { price: 3.0, icon: "👑", color: "from-purple-500 to-purple-600" },
-  minibus: { price: 3.0, icon: "🚌", color: "from-red-500 to-red-600" },
-};
+export interface DbTariff {
+  id: string;
+  key: string;
+  pricePerKm: number;
+  imageUrl: string;
+}
 
 interface CalculatorFormProps {
   locale: Locale;
+  dbTariffs: DbTariff[];
+
+  // === НОВЫЕ ПРОПСЫ ДЛЯ ДИНАМИЧЕСКИХ СТРАНИЦ ===
+  initialFrom?: string;
+  initialTo?: string;
+  initialDistance?: string;
+  initialFromCoords?: { lat: number; lon: number } | null;
+  initialToCoords?: { lat: number; lon: number } | null;
+  preCalculatedResults?: Record<string, number> | null;
+  autoCalculateOnMount?: boolean;
 }
 
 interface AddressSuggestion {
@@ -46,10 +57,58 @@ interface AddressSuggestion {
   lon: number;
 }
 
-export function CalculatorForm({ locale }: CalculatorFormProps) {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [distance, setDistance] = useState("");
+const FALLBACK_TARIFFS: DbTariff[] = [
+  {
+    id: "1",
+    key: "standard",
+    pricePerKm: 1.3,
+    imageUrl: "/tariffs/standard.webp",
+  },
+  {
+    id: "2",
+    key: "comfort",
+    pricePerKm: 1.5,
+    imageUrl: "/tariffs/comfort.webp",
+  },
+  {
+    id: "3",
+    key: "business",
+    pricePerKm: 3.0,
+    imageUrl: "/tariffs/business.webp",
+  },
+  {
+    id: "4",
+    key: "minivan",
+    pricePerKm: 2.2,
+    imageUrl: "/tariffs/minivan.webp",
+  },
+  { id: "5", key: "vip", pricePerKm: 3.0, imageUrl: "/tariffs/vip.webp" },
+  {
+    id: "6",
+    key: "minibus",
+    pricePerKm: 3.0,
+    imageUrl: "/tariffs/minibus.webp",
+  },
+];
+
+export function CalculatorForm({
+  locale,
+  dbTariffs,
+  initialFrom = "",
+  initialTo = "",
+  initialDistance = "",
+  initialFromCoords = null,
+  initialToCoords = null,
+  preCalculatedResults = null,
+  autoCalculateOnMount = false,
+}: CalculatorFormProps) {
+  const tariffs =
+    dbTariffs && dbTariffs.length > 0 ? dbTariffs : FALLBACK_TARIFFS;
+
+  const [from, setFrom] = useState(initialFrom);
+  const [to, setTo] = useState(initialTo);
+  const [distance, setDistance] = useState(initialDistance);
+
   const [fromSuggestions, setFromSuggestions] = useState<AddressSuggestion[]>(
     [],
   );
@@ -57,30 +116,66 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
   const [showFromSuggestions, setShowFromSuggestions] = useState(false);
   const [showToSuggestions, setShowToSuggestions] = useState(false);
 
+  const [isSearchingFrom, setIsSearchingFrom] = useState(false);
+  const [isSearchingTo, setIsSearchingTo] = useState(false);
+
   const [fromCoords, setFromCoords] = useState<{
     lat: number;
     lon: number;
-  } | null>(null);
+  } | null>(initialFromCoords);
   const [toCoords, setToCoords] = useState<{ lat: number; lon: number } | null>(
-    null,
+    initialToCoords,
   );
-  const [routeLine, setRouteLine] = useState<[number, number][] | null>(null);
 
+  const [routeLine, setRouteLine] = useState<[number, number][] | null>(null);
   const [isCityTour, setIsCityTour] = useState(false);
+
+  const [results, setResults] = useState<Record<string, number> | null>(
+    preCalculatedResults,
+  );
+  const [isCalculating, setIsCalculating] = useState(false);
+
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [selectedBookingTariff, setSelectedBookingTariff] = useState("");
+
   const fromInputRef = useRef<HTMLDivElement>(null);
   const toInputRef = useRef<HTMLDivElement>(null);
-  const [selectedTariff, setSelectedTariff] = useState<
-    keyof typeof TARIFFS | null
-  >(null);
-  const [results, setResults] = useState<Record<string, number> | null>(null);
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [bookingModalOpen, setBookingModalOpen] = useState(false);
-  const [selectedBookingTariff, setSelectedBookingTariff] =
-    useState<string>("");
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const t = translations[locale];
 
+  // ====================== Автозаполнение и автоподсчёт ======================
+  useEffect(() => {
+    if (initialFrom) setFrom(initialFrom);
+    if (initialTo) setTo(initialTo);
+    if (initialDistance) setDistance(initialDistance);
+    if (initialFromCoords) setFromCoords(initialFromCoords);
+    if (initialToCoords) setToCoords(initialToCoords);
+
+    // Автоматический расчёт при загрузке динамической страницы
+    if (
+      autoCalculateOnMount &&
+      initialDistance &&
+      Number(initialDistance) > 0
+    ) {
+      const dist = Number(initialDistance);
+      const calculated: Record<string, number> = {};
+      tariffs.forEach((tariff) => {
+        calculated[tariff.key] = Number((dist * tariff.pricePerKm).toFixed(2));
+      });
+      setResults(calculated);
+    }
+  }, [
+    initialFrom,
+    initialTo,
+    initialDistance,
+    initialFromCoords,
+    initialToCoords,
+    autoCalculateOnMount,
+    tariffs,
+  ]);
+
+  // ====================== Остальная логика (без изменений) ======================
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -100,30 +195,20 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Форматирование адреса из ответа Nominatim
   const formatNominatimAddress = (address: any, name: string) => {
     const parts = [];
-
-    // Если есть дорога и номер дома
     if (address.road) {
       let street = address.road;
       if (address.house_number) street += `, ${address.house_number}`;
       parts.push(street);
     } else if (name) {
-      // Иначе берем название объекта (Аэропорт и тд)
       parts.push(name);
     }
-
-    // Добавляем город
     const city = address.city || address.town || address.village;
-    if (city && city !== name) {
-      parts.push(city);
-    }
-
+    if (city && city !== name) parts.push(city);
     return parts.length > 0 ? parts.join(", ") : "Неизвестный адрес";
   };
 
-  // Умный поиск Nominatim
   const fetchAddressSuggestions = async (
     query: string,
     isFromField: boolean,
@@ -139,13 +224,14 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
       return;
     }
 
+    if (isFromField) setIsSearchingFrom(true);
+    else setIsSearchingTo(true);
+
     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
 
     searchTimerRef.current = setTimeout(async () => {
       try {
-        // Делаем строку понятнее для API: "Хоружей 10" превращаем в "Хоружей, 10"
         const smartQuery = query.replace(/([а-яА-Яa-zA-Z])\s+(\d+)/g, "$1, $2");
-
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?` +
             new URLSearchParams({
@@ -154,28 +240,21 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               limit: "5",
               addressdetails: "1",
               "accept-language": locale === "ru" ? "ru" : "en",
-              // Ограничиваем поиск Беларусью и странами соседями для максимальной точности
               countrycodes: "by,ru,pl,lt,lv",
             }),
-          {
-            headers: {
-              // Nominatim требует User-Agent для бесплатных запросов
-              "User-Agent": "SKTransfer.by (taxi booking service)",
-            },
-          },
+          { headers: { "User-Agent": "SKTransfer.by" } },
         );
 
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
 
+        const data = await response.json();
         const suggestions: AddressSuggestion[] = data.map((item: any) => ({
           display_name: formatNominatimAddress(item.address, item.name),
           lat: Number(item.lat),
           lon: Number(item.lon),
         }));
 
-        // Убираем дубликаты
         const uniqueSuggestions = suggestions.filter(
           (v, i, a) =>
             a.findIndex((t) => t.display_name === v.display_name) === i,
@@ -190,11 +269,13 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
         }
       } catch (error) {
         console.error("Error fetching addresses:", error);
+      } finally {
+        if (isFromField) setIsSearchingFrom(false);
+        else setIsSearchingTo(false);
       }
-    }, 500); // 500ms задержка, чтобы не спамить сервер OSM
+    }, 500);
   };
 
-  // Построение маршрута по дорогам через OSRM
   const fetchRouteAndDistance = async (
     startLat: number,
     startLon: number,
@@ -206,10 +287,8 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
         `https://router.project-osrm.org/route/v1/driving/${startLon},${startLat};${endLon},${endLat}?overview=full&geometries=geojson`,
       );
       const data = await res.json();
-
       if (data.code === "Ok" && data.routes.length > 0) {
         const route = data.routes[0];
-
         const distanceKm = (route.distance / 1000).toFixed(1);
         setDistance(distanceKm);
 
@@ -268,27 +347,20 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
     if (isNaN(dist) || dist <= 0) return;
 
     setIsCalculating(true);
-
     setTimeout(() => {
-      const calculatedResults: Record<string, number> = {};
-      Object.entries(TARIFFS).forEach(([key, tariff]) => {
-        calculatedResults[key] = dist * tariff.price;
+      const calculated: Record<string, number> = {};
+      tariffs.forEach((tariff) => {
+        calculated[tariff.key] = Number((dist * tariff.pricePerKm).toFixed(2));
       });
-      setResults(calculatedResults);
+      setResults(calculated);
       setIsCalculating(false);
     }, 300);
   };
 
   const handleBooking = (tariffKey: string) => {
-    const tariffNames: Record<string, string> = {
-      standard: t.tariffs.standard,
-      comfort: t.tariffs.comfort,
-      business: t.tariffs.business,
-      minivan: t.tariffs.minivan,
-      vip: t.tariffs.vip,
-      minibus: t.tariffs.minibus,
-    };
-    setSelectedBookingTariff(tariffNames[tariffKey] || tariffKey);
+    const tariffName =
+      t.tariffs?.[tariffKey as keyof typeof t.tariffs] || tariffKey;
+    setSelectedBookingTariff(tariffName);
     setBookingModalOpen(true);
   };
 
@@ -307,10 +379,10 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               <Calculator className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="min-w-0">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold gold-gradient-text break-words whitespace-normal">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold gold-gradient-text break-words">
                 {t.calculator.title}
               </h3>
-              <p className="text-xs sm:text-sm text-gray-600 break-words whitespace-normal">
+              <p className="text-xs sm:text-sm text-gray-600 break-words">
                 {t.calculator.subtitle}
               </p>
             </div>
@@ -325,55 +397,36 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               />
             </div>
 
-            <div className="flex items-center space-x-2 p-3 rounded-lg bg-amber-50 border border-amber-200">
-              <Checkbox
-                id="cityTour"
-                checked={isCityTour}
-                onCheckedChange={handleCityTourToggle}
-                className="border-[var(--gold)] data-[state=checked]:bg-[var(--gold)]"
-              />
-              <label
-                htmlFor="cityTour"
-                className="text-sm font-medium text-gray-700 cursor-pointer leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {t.calculator.cityTour}
-              </label>
-            </div>
-
+            {/* Откуда */}
             <div className="space-y-2" ref={fromInputRef}>
               <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <MapPin className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
-                <span className="truncate">
-                  {isCityTour ? t.calculator.city : t.calculator.from}
-                </span>
+                {t.calculator.from}
               </Label>
               <div className="relative">
                 <Input
-                  placeholder={
-                    isCityTour
-                      ? t.calculator.cityPlaceholder
-                      : "Минск, пр. Независимости, 115"
-                  }
+                  placeholder="Минск, Независимости"
                   value={from}
                   onChange={(e) => {
                     setFrom(e.target.value);
                     fetchAddressSuggestions(e.target.value, true);
                   }}
-                  className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] transition-colors w-full bg-white text-gray-900"
+                  className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
                 />
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)]/50" />
-
+                {isSearchingFrom ? (
+                  <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)] animate-spin" />
+                ) : (
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)]/50" />
+                )}
                 {showFromSuggestions && fromSuggestions.length > 0 && (
                   <div className="absolute z-50 w-full mt-1 bg-white border-2 border-[var(--gold)]/20 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                     {fromSuggestions.map((suggestion, index) => (
                       <div
                         key={index}
                         onClick={() => handleAddressSelect(suggestion, true)}
-                        className="p-3 hover:bg-amber-50 cursor-pointer border-b last:border-b-0 transition-colors"
+                        className="p-3 hover:bg-amber-50 cursor-pointer border-b last:border-b-0"
                       >
-                        <p className="text-sm text-gray-900">
-                          {suggestion.display_name}
-                        </p>
+                        {suggestion.display_name}
                       </div>
                     ))}
                   </div>
@@ -381,35 +434,37 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               </div>
             </div>
 
+            {/* Куда */}
             {!isCityTour && (
               <div className="space-y-2" ref={toInputRef}>
                 <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                   <MapPin className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
-                  <span className="truncate">{t.calculator.to}</span>
+                  {t.calculator.to}
                 </Label>
                 <div className="relative">
                   <Input
-                    placeholder={"Аэропорт Вильнюс"}
+                    placeholder="Гродно / Нарочь / Внуково"
                     value={to}
                     onChange={(e) => {
                       setTo(e.target.value);
                       fetchAddressSuggestions(e.target.value, false);
                     }}
-                    className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] transition-colors w-full bg-white text-gray-900"
+                    className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
                   />
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)]/50" />
-
+                  {isSearchingTo ? (
+                    <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)] animate-spin" />
+                  ) : (
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)]/50" />
+                  )}
                   {showToSuggestions && toSuggestions.length > 0 && (
                     <div className="absolute z-50 w-full mt-1 bg-white border-2 border-[var(--gold)]/20 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {toSuggestions.map((suggestion, index) => (
                         <div
                           key={index}
                           onClick={() => handleAddressSelect(suggestion, false)}
-                          className="p-3 hover:bg-amber-50 cursor-pointer border-b last:border-b-0 transition-colors"
+                          className="p-3 hover:bg-amber-50 cursor-pointer border-b last:border-b-0"
                         >
-                          <p className="text-sm text-gray-900">
-                            {suggestion.display_name}
-                          </p>
+                          {suggestion.display_name}
                         </div>
                       ))}
                     </div>
@@ -418,18 +473,19 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               </div>
             )}
 
+            {/* Расстояние */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <TrendingUp className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
-                <span className="truncate">{t.calculator.distance}</span>
+                {t.calculator.distance}
               </Label>
               <div className="relative">
                 <Input
                   type="text"
                   readOnly
-                  placeholder="Рассчитывается автоматически..."
                   value={distance}
-                  className="pl-10 pr-12 border-2 border-gray-200 bg-gray-50 cursor-not-allowed text-base sm:text-lg font-semibold w-full text-gray-900 focus-visible:ring-0 focus-visible:border-gray-200"
+                  placeholder="Рассчитывается автоматически..."
+                  className="pl-10 pr-12 border-2 border-gray-200 bg-gray-50 text-base font-semibold"
                 />
                 <TrendingUp className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)]/50" />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600">
@@ -438,19 +494,20 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
               </div>
             </div>
 
+            {/* Кнопка расчёта */}
             <Button
               onClick={calculateAllPrices}
               disabled={!distance || Number.parseFloat(distance) <= 0}
-              className="w-full gold-gradient hover:opacity-90 transition-opacity py-4 sm:py-6 text-base sm:text-lg font-semibold disabled:opacity-50 text-white"
+              className="w-full gold-gradient hover:opacity-90 py-4 sm:py-6 text-base sm:text-lg font-semibold"
             >
               {isCalculating ? (
                 <>
-                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   {t.calculator.calculating}
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  <Sparkles className="w-5 h-5 mr-2" />
                   {t.calculator.calculate}
                 </>
               )}
@@ -458,85 +515,53 @@ export function CalculatorForm({ locale }: CalculatorFormProps) {
           </div>
         </Card>
 
+        {/* Результаты тарифов */}
         {results && (
           <div className="grid gap-3 sm:gap-4 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="text-center mb-2">
-              <h4 className="text-base sm:text-lg md:text-xl font-semibold gold-gradient-text flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-                <span className="truncate">
-                  {t.calculator.tariffComparison}
-                </span>
-              </h4>
-              <p className="text-xs sm:text-sm text-gray-600 px-4">
-                {t.calculator.chooseBestOption}
-              </p>
-            </div>
+            {tariffs.map((tariff) => {
+              const price = results[tariff.key];
+              if (price === undefined) return null;
 
-            {Object.entries(TARIFFS).map(([key, tariff]) => {
-              const price = results[key];
-              const isSelected = selectedTariff === key;
-              const tariffKey = key as keyof typeof TARIFFS;
+              const displayName =
+                t.tariffs?.[tariff.key as keyof typeof t.tariffs] || tariff.key;
 
               return (
-                <Card
-                  key={key}
-                  className={`p-4 sm:p-6 cursor-pointer transition-all duration-200 w-full bg-white ${
-                    isSelected
-                      ? "border-2 border-[var(--gold)] shadow-lg"
-                      : "border border-gray-200 hover:border-[var(--gold)]/50"
-                  }`}
-                  onClick={() => setSelectedTariff(tariffKey)}
-                >
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-                    <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1 w-full">
-                      <div
-                        className={`text-2xl sm:text-3xl md:text-4xl p-2 sm:p-3 rounded-2xl bg-gradient-to-br ${tariff.color} bg-opacity-10 flex-shrink-0`}
-                      >
-                        {tariff.icon}
+                <Card key={tariff.id} className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-20 h-14 sm:w-28 sm:h-16 bg-gray-50 rounded-xl overflow-hidden">
+                        <Image
+                          src={tariff.imageUrl}
+                          alt={displayName}
+                          fill
+                          className="object-contain"
+                        />
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <h5 className="font-semibold text-sm sm:text-base md:text-lg break-words text-gray-900">
-                          {t.tariffs[tariffKey]}
-                        </h5>
-                        <p className="text-xs sm:text-sm text-gray-600 break-words">
-                          {tariff.price} BYN/км × {distance} км
+                      <div>
+                        <h5 className="font-semibold text-lg">{displayName}</h5>
+                        <p className="text-sm text-gray-600">
+                          {tariff.pricePerKm} BYN/км × {distance} км
                         </p>
                       </div>
                     </div>
 
-                    <div className="text-left sm:text-right w-full sm:w-auto flex-shrink-0">
-                      <div className="text-xl sm:text-2xl md:text-3xl font-bold gold-gradient-text">
+                    <div className="text-right">
+                      <div className="text-3xl font-bold gold-gradient-text">
                         {price.toFixed(2)}
                       </div>
-                      <div className="text-xs sm:text-sm text-gray-600">
-                        BYN
-                      </div>
+                      <div className="text-sm text-gray-600">BYN</div>
                     </div>
                   </div>
 
-                  {isSelected && (
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleBooking(key);
-                      }}
-                      className="w-full mt-3 sm:mt-4 gold-gradient hover:opacity-90 transition-opacity text-sm sm:text-base py-2 sm:py-3 text-white"
-                    >
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      {t.calculator.bookThisTariff}
-                    </Button>
-                  )}
+                  <Button
+                    onClick={() => handleBooking(tariff.key)}
+                    className="w-full mt-4 gold-gradient"
+                  >
+                    Забронировать этот тариф
+                  </Button>
                 </Card>
               );
             })}
-          </div>
-        )}
-
-        {results && (
-          <div className="mt-4 p-4 rounded-lg bg-amber-50 border-2 border-amber-200">
-            <p className="text-xs sm:text-sm text-gray-900 text-center">
-              ⓘ {t.calculator.priceDisclaimer}
-            </p>
           </div>
         )}
       </div>
