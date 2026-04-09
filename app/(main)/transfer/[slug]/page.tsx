@@ -2,6 +2,7 @@ import TransferPageContent from "@/components/transfer-page-content";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { getLocaleOnServer } from "@/lib/get-locale-on-server";
 
 type Params = Promise<{ slug: string }>;
 
@@ -10,6 +11,7 @@ export async function generateMetadata({
 }: {
   params: Params;
 }): Promise<Metadata> {
+  const locale = await getLocaleOnServer();
   const { slug } = await params;
 
   const route = await prisma.transferRoute.findUnique({
@@ -17,29 +19,53 @@ export async function generateMetadata({
   });
 
   if (!route) {
-    return { title: "Трансфер не найден | SKTransfer.by" };
+    return { title: "Transfer not found | SKTransfer" };
   }
 
-  const title = `Трансфер такси ${route.fromNameRu} — ${route.toNameRu} | Цена, Заказ`;
-  const description = `Заказать индивидуальный трансфер из ${route.fromNameRu} в ${route.toNameRu}. Расстояние: ${route.distanceKm} км. Фиксированная цена, встреча с табличкой, комфортные авто и минивэны.`;
+  // Динамические имена для SEO в зависимости от локали
+  const fromName =
+    locale === "en"
+      ? route.fromNameEn || route.fromNameRu
+      : locale === "zh"
+        ? route.fromNameZh || route.fromNameRu
+        : route.fromNameRu;
+  const toName =
+    locale === "en"
+      ? route.toNameEn || route.toNameRu
+      : locale === "zh"
+        ? route.toNameZh || route.toNameRu
+        : route.toNameRu;
+
+  const titles = {
+    ru: `Трансфер такси ${fromName} — ${toName} | Цена, Заказ`,
+    en: `Taxi transfer ${fromName} — ${toName} | Price, Booking`,
+    zh: `出租车接送 ${fromName} — ${toName} | 价格, 预订`,
+  };
+
+  const descriptions = {
+    ru: `Заказать индивидуальный трансфер из ${fromName} в ${toName}. Расстояние: ${route.distanceKm} км. Фиксированная цена, встреча с табличкой, комфортные авто.`,
+    en: `Book a private transfer from ${fromName} to ${toName}. Distance: ${route.distanceKm} km. Fixed price, meet & greet, comfortable cars.`,
+    zh: `预订从 ${fromName} 到 ${toName} 的私人接送服务。 距离：${route.distanceKm} 公里。 固定价格，举牌迎接，舒适的汽车。`,
+  };
 
   return {
-    title,
-    description,
+    title: titles[locale],
+    description: descriptions[locale],
     openGraph: {
-      title,
-      description,
+      title: titles[locale],
+      description: descriptions[locale],
       type: "website",
-      locale: "ru_RU",
+      locale: locale === "ru" ? "ru_RU" : locale === "en" ? "en_US" : "zh_CN",
       siteName: "SKTransfer",
     },
     alternates: {
-      canonical: `https://sktransfer.by/transfer/${slug}`, // Замените на ваш реальный домен
+      canonical: `https://sktransfer.by/transfer/${slug}`,
     },
   };
 }
 
 export default async function TransferPage({ params }: { params: Params }) {
+  const locale = await getLocaleOnServer();
   const { slug } = await params;
 
   const route = await prisma.transferRoute.findUnique({
@@ -55,35 +81,65 @@ export default async function TransferPage({ params }: { params: Params }) {
     orderBy: { order: "asc" },
   });
 
-  // Предварительный расчёт цен для передачи в клиент и для SEO
+  // Забираем популярные маршруты (берем все переводы имен, чтобы клиентский компонент мог их переключать)
+  const popularRoutes = await prisma.transferRoute.findMany({
+    where: {
+      isPopular: true,
+      slug: { not: slug },
+    },
+    select: {
+      slug: true,
+      distanceKm: true,
+      fromNameRu: true,
+      toNameRu: true,
+      fromNameEn: true,
+      toNameEn: true,
+      fromNameZh: true,
+      toNameZh: true,
+      additionalContentRu: locale === "ru",
+      additionalContentEn: locale === "en",
+      additionalContentZh: locale === "zh",
+    },
+    orderBy: { distanceKm: "asc" },
+    take: 6,
+  });
+
   const preCalculated: Record<string, number> = {};
   let minPrice = Infinity;
-
   tariffs.forEach((t) => {
     const price = Number((route.distanceKm * t.pricePerKm).toFixed(2));
     preCalculated[t.key] = price;
     if (price < minPrice) minPrice = price;
   });
 
-  // Генерация JSON-LD микроразметки для Google (Service/Product)
+  // Имена для JSON-LD
+  const fromName =
+    locale === "en"
+      ? route.fromNameEn || route.fromNameRu
+      : locale === "zh"
+        ? route.fromNameZh || route.fromNameRu
+        : route.fromNameRu;
+  const toName =
+    locale === "en"
+      ? route.toNameEn || route.toNameRu
+      : locale === "zh"
+        ? route.toNameZh || route.toNameRu
+        : route.toNameRu;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: `Трансфер ${route.fromNameRu} — ${route.toNameRu}`,
-    description: `Индивидуальный пассажирский трансфер по маршруту ${route.fromNameRu} - ${route.toNameRu} на автомобилях комфорт и бизнес класса.`,
+    name: `Transfer ${fromName} — ${toName}`,
     provider: {
       "@type": "LocalBusiness",
       name: "SKTransfer",
       image: "https://sktransfer.by/logo.png",
       telephone: "+375291228484",
-      address: {
-        "@type": "PostalAddress",
-        addressCountry: "BY",
-      },
+      address: { "@type": "PostalAddress", addressCountry: "BY" },
     },
     areaServed: [
-      { "@type": "City", name: route.fromNameRu },
-      { "@type": "City", name: route.toNameRu },
+      { "@type": "City", name: fromName },
+      { "@type": "City", name: toName },
     ],
     offers: {
       "@type": "Offer",
@@ -101,8 +157,10 @@ export default async function TransferPage({ params }: { params: Params }) {
       />
 
       <TransferPageContent
+        locale={locale} // ПРОКИДЫВАЕМ ЛОКАЛЬ
         route={route}
         tariffs={tariffs}
+        popularRoutes={popularRoutes}
         preCalculated={preCalculated}
         initialDistance={route.distanceKm.toFixed(1)}
         initialFromCoords={

@@ -126,3 +126,74 @@ export async function deleteArticle(id: string) {
   revalidatePath("/admin/articles");
   revalidatePath("/blog");
 }
+
+// --- ЭКШЕНЫ ДЛЯ ТАРИФОВ ---
+export async function saveTariff(id: string | null, formData: FormData) {
+  const data = {
+    key: formData.get("key") as string,
+    pricePerKm: parseFloat(formData.get("pricePerKm") as string),
+    imageUrl: formData.get("imageUrl") as string,
+    isActive: formData.get("isActive") === "true",
+    order: parseInt(formData.get("order") as string) || 0,
+  };
+
+  if (id) {
+    await prisma.tariff.update({ where: { id }, data });
+  } else {
+    await prisma.tariff.create({ data });
+  }
+
+  revalidatePath("/admin/tariffs");
+  redirect("/admin/tariffs");
+}
+
+export async function deleteTariff(id: string) {
+  await prisma.tariff.delete({ where: { id } });
+  revalidatePath("/admin/tariffs");
+}
+
+// --- ЭКШЕНЫ ДЛЯ МАРШРУТОВ ---
+export async function saveRoute(id: string | null, formData: FormData) {
+  const data = {
+    slug: formData.get("slug") as string,
+    fromSlug: formData.get("fromSlug") as string,
+    toSlug: formData.get("toSlug") as string,
+    
+    distanceKm: parseFloat(formData.get("distanceKm") as string),
+    durationMin: formData.get("durationMin") ? parseInt(formData.get("durationMin") as string) : null,
+    
+    fromLat: formData.get("fromLat") ? parseFloat(formData.get("fromLat") as string) : null,
+    fromLon: formData.get("fromLon") ? parseFloat(formData.get("fromLon") as string) : null,
+    toLat: formData.get("toLat") ? parseFloat(formData.get("toLat") as string) : null,
+    toLon: formData.get("toLon") ? parseFloat(formData.get("toLon") as string) : null,
+
+    fromNameRu: formData.get("fromNameRu") as string,
+    fromNameEn: formData.get("fromNameEn") as string,
+    fromNameZh: formData.get("fromNameZh") as string || null,
+    toNameRu: formData.get("toNameRu") as string,
+    toNameEn: formData.get("toNameEn") as string,
+    toNameZh: formData.get("toNameZh") as string || null,
+
+    additionalContentRu: formData.get("additionalContentRu") as string || null,
+    additionalContentEn: formData.get("additionalContentEn") as string || null,
+    additionalContentZh: formData.get("additionalContentZh") as string || null,
+
+    isPopular: formData.get("isPopular") === "true",
+    isAirport: formData.get("isAirport") === "true",
+    isInternational: formData.get("isInternational") === "true",
+  };
+
+  if (id) {
+    await prisma.transferRoute.update({ where: { id }, data });
+  } else {
+    await prisma.transferRoute.create({ data });
+  }
+
+  revalidatePath("/admin/routes");
+  redirect("/admin/routes");
+}
+
+export async function deleteRoute(id: string) {
+  await prisma.transferRoute.delete({ where: { id } });
+  revalidatePath("/admin/routes");
+}

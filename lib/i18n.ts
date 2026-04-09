@@ -2,6 +2,58 @@ export type Locale = "ru" | "en" | "zh";
 
 export const translations = {
   ru: {
+    transferPage: {
+      breadcrumbs: { home: "Главная", transfers: "Направления" },
+      title: "Трансфер",
+      distance: "Расстояние:",
+      inRoute: "В пути:",
+      onDemand: "по запросу",
+      h: "ч",
+      min: "мин",
+      flexible: "Гибкая индивидуализация",
+      tripInfo: "Информация о поездке",
+      featuresTitle: "Особенности и возможности",
+      features: {
+        wait: { title: "Ожидание", desc: "До 20 мин бесплатно" },
+        safety: { title: "Безопасность", desc: "Опытные водители" },
+        wifi: { title: "Wi-Fi", desc: "Бесплатный интернет" },
+        water: { title: "Напитки", desc: "Вода в салоне авто" },
+        baby: { title: "Детское кресло", desc: "Бесплатно по запросу" },
+        payment: { title: "Оплата", desc: "Наличные или карта" },
+      },
+      howItWorks: {
+        title: "Как проходит поездка?",
+        step1: {
+          title: "Оформление заявки",
+          desc: "Выберите тариф справа и заполните данные. Оператор подтвердит заказ в течение 5 минут.",
+        },
+        step2: {
+          title: "Встреча",
+          desc: "Водитель приедет заранее. Если это аэропорт — встретит вас в зоне прилета с табличкой.",
+        },
+        step3: {
+          title: "Комфортная поездка",
+          desc: "Поможем с багажом и с комфортом доставим точно по адресу. Оплата по прибытию.",
+        },
+      },
+      faq: {
+        title: "Частые вопросы",
+        q1: {
+          q: "А если мой рейс задержат?",
+          a: "Мы бесплатно отслеживаем номера рейсов на онлайн-табло. Водитель приедет точно ко времени посадки.",
+        },
+        q2: {
+          q: "Цена в калькуляторе окончательная?",
+          a: "Цена является приблизительной и зависит от дополнительных услуг. Окончательную цену вы узнаете у менеджера.",
+        },
+      },
+      popular: {
+        title: "Популярные маршруты",
+        findOutPrice: "Узнать цену",
+        defaultPreview:
+          "Комфортный индивидуальный трансфер. Бронируйте авто онлайн по фиксированной цене. Встреча с табличкой, помощь с багажом.",
+      },
+    },
     blogIndex: {
       title: "Блог и путеводитель",
       subtitle:
@@ -385,6 +437,58 @@ export const translations = {
     },
   },
   en: {
+    transferPage: {
+      breadcrumbs: { home: "Home", transfers: "Destinations" },
+      title: "Transfer",
+      distance: "Distance:",
+      inRoute: "Travel time:",
+      onDemand: "on request",
+      h: "h",
+      min: "min",
+      flexible: "Flexible customization",
+      tripInfo: "Trip Information",
+      featuresTitle: "Features & Amenities",
+      features: {
+        wait: { title: "Waiting time", desc: "Up to 20 min free" },
+        safety: { title: "Safety", desc: "Experienced drivers" },
+        wifi: { title: "Wi-Fi", desc: "Free internet" },
+        water: { title: "Drinks", desc: "Water in the cabin" },
+        baby: { title: "Child seat", desc: "Free on request" },
+        payment: { title: "Payment", desc: "Cash or card" },
+      },
+      howItWorks: {
+        title: "How it works?",
+        step1: {
+          title: "Booking",
+          desc: "Choose a tariff and fill out the details. The operator will confirm within 5 minutes.",
+        },
+        step2: {
+          title: "Meeting",
+          desc: "The driver will arrive in advance. At the airport, they will meet you with a sign.",
+        },
+        step3: {
+          title: "Comfortable trip",
+          desc: "We will help with luggage and deliver you comfortably. Payment upon arrival.",
+        },
+      },
+      faq: {
+        title: "FAQ",
+        q1: {
+          q: "What if my flight is delayed?",
+          a: "We track flights for free. The driver will arrive exactly when you land.",
+        },
+        q2: {
+          q: "Is the calculator price final?",
+          a: "The price is approximate. The final price depends on additional services.",
+        },
+      },
+      popular: {
+        title: "Popular routes",
+        findOutPrice: "Check price",
+        defaultPreview:
+          "Comfortable private transfer. Book a car online at a fixed price. Meet & greet with a sign, luggage assistance.",
+      },
+    },
     blogIndex: {
       title: "Blog & Guide",
       subtitle:
@@ -770,6 +874,58 @@ export const translations = {
     },
   },
   zh: {
+    transferPage: {
+      breadcrumbs: { home: "主页", transfers: "目的地" },
+      title: "接送",
+      distance: "距离:",
+      inRoute: "行程时间:",
+      onDemand: "根据要求",
+      h: "小时",
+      min: "分钟",
+      flexible: "灵活定制",
+      tripInfo: "行程信息",
+      featuresTitle: "特点及设施",
+      features: {
+        wait: { title: "等待时间", desc: "最多免费20分钟" },
+        safety: { title: "安全", desc: "经验丰富的司机" },
+        wifi: { title: "Wi-Fi", desc: "免费上网" },
+        water: { title: "饮料", desc: "车内提供水" },
+        baby: { title: "儿童座椅", desc: "免费提供" },
+        payment: { title: "付款方式", desc: "现金或刷卡" },
+      },
+      howItWorks: {
+        title: "服务流程",
+        step1: {
+          title: "预订",
+          desc: "选择费率并填写详细信息。接线员将在5分钟内确认。",
+        },
+        step2: {
+          title: "见面",
+          desc: "司机将提前到达。如果在机场，他们会举牌迎接。",
+        },
+        step3: {
+          title: "舒适旅行",
+          desc: "我们将协助搬运行李并安全送达。抵达后付款。",
+        },
+      },
+      faq: {
+        title: "常见问题",
+        q1: {
+          q: "如果航班延误怎么办？",
+          a: "我们免费跟踪航班。司机将准确在您降落时到达。",
+        },
+        q2: {
+          q: "计算器价格是最终价格吗？",
+          a: "价格为估算值。最终价格取决于额外服务。",
+        },
+      },
+      popular: {
+        title: "热门路线",
+        findOutPrice: "查看价格",
+        defaultPreview:
+          "舒适的私人接送服务。以固定价格在线预订汽车。举牌迎接，协助搬运行李。",
+      },
+    },
     blogIndex: {
       title: "博客与指南",
       subtitle:

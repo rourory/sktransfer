@@ -134,6 +134,10 @@ model TransferRoute {
   toNameRu          String
   toNameEn          String
   toNameZh          String?
+
+  additionalContentRu String?
+  additionalContentEn String?
+  additionalContentZh String?
   
   // Данные маршрута (будут использоваться для предзаполнения)
   distanceKm        Float

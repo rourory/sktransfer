@@ -1,6 +1,8 @@
 "use client";
 
 import { CalculatorForm, type DbTariff } from "@/components/calculator-form";
+import { PopularRoutesList } from "@/components/popular-routes-list";
+import { type Locale, translations } from "@/lib/i18n";
 import {
   Clock,
   MapPin,
@@ -9,16 +11,15 @@ import {
   Coffee,
   Baby,
   CreditCard,
-  CheckCircle2,
   HelpCircle,
-  Plane,
-  Car,
 } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
+  locale: Locale;
   route: any;
   tariffs: DbTariff[];
+  popularRoutes: any[];
   preCalculated: Record<string, number>;
   initialDistance: string;
   initialFromCoords: { lat: number; lon: number } | null;
@@ -26,129 +27,161 @@ interface Props {
 }
 
 export default function TransferPageContent({
+  locale,
   route,
   tariffs,
+  popularRoutes,
   preCalculated,
   initialDistance,
   initialFromCoords,
   initialToCoords,
 }: Props) {
+  const t = translations[locale].transferPage;
+
+  const fromName =
+    locale === "en"
+      ? route.fromNameEn || route.fromNameRu
+      : locale === "zh"
+        ? route.fromNameZh || route.fromNameRu
+        : route.fromNameRu;
+  const toName =
+    locale === "en"
+      ? route.toNameEn || route.toNameRu
+      : locale === "zh"
+        ? route.toNameZh || route.toNameRu
+        : route.toNameRu;
+
+  const additionalContent =
+    locale === "en"
+      ? route.additionalContentEn
+      : locale === "zh"
+        ? route.additionalContentZh
+        : route.additionalContentRu;
+
   const formatDuration = (minutes: number) => {
-    if (!minutes) return "по запросу";
+    if (!minutes) return t.onDemand;
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
-    return h > 0 ? `${h} ч ${m > 0 ? `${m} мин` : ""}` : `${m} мин`;
+    return h > 0
+      ? `${h} ${t.h} ${m > 0 ? `${m} ${t.min}` : ""}`
+      : `${m} ${t.min}`;
   };
 
   return (
     <div className="bg-gray-50 min-h-screen pb-16">
-      {/* HERO СЕКЦИЯ */}
-      {/* Увеличен pt (padding-top), чтобы контент не залезал под фиксированный Header */}
       <section className="bg-white border-b border-gray-200 pt-8 pb-8 md:pt-12 md:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="text-sm text-gray-500 mb-6 flex items-center space-x-2">
             <Link
-              href="/"
+              href={`/${locale}`}
               className="hover:text-[var(--gold)] transition-colors"
             >
-              Главная
+              {t.breadcrumbs.home}
             </Link>
             <span>/</span>
             <Link
-              href="/transfers"
+              href={`/${locale}/transfers`}
               className="hover:text-[var(--gold)] transition-colors"
             >
-              Направления
+              {t.breadcrumbs.transfers}
             </Link>
             <span>/</span>
-            <span className="text-gray-900 font-medium">{route.toNameRu}</span>
+            <span className="text-gray-900 font-medium">{toName}</span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Трансфер{" "}
+            {t.title}{" "}
             <span className="gold-gradient-text">
-              {route.fromNameRu} — {route.toNameRu}
+              {fromName} — {toName}
             </span>
           </h1>
 
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm md:text-base text-gray-600">
             <div className="flex items-center bg-gray-100 px-4 py-2 rounded-lg">
               <MapPin className="w-4 h-4 mr-2 text-[var(--gold)]" />
-              Расстояние:{" "}
+              {t.distance}{" "}
               <strong className="ml-1">{route.distanceKm} км</strong>
             </div>
-            <div className="flex items-center bg-gray-100 px-4 py-2 rounded-lg">
-              <Clock className="w-4 h-4 mr-2 text-[var(--gold)]" />В пути:{" "}
-              <strong className="ml-1">
-                ≈ {formatDuration(route.durationMin)}
-              </strong>
-            </div>
+            {route.durationMin && (
+              <div className="flex items-center bg-gray-100 px-4 py-2 rounded-lg">
+                <Clock className="w-4 h-4 mr-2 text-[var(--gold)]" />
+                {t.inRoute}{" "}
+                <strong className="ml-1">
+                  ≈ {formatDuration(route.durationMin)}
+                </strong>
+              </div>
+            )}
             <div className="flex items-center bg-green-50 text-green-700 px-4 py-2 rounded-lg border border-green-200 font-medium">
               <ShieldCheck className="w-4 h-4 mr-2" />
-              Фиксированная цена
+              {t.flexible}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ОСНОВНОЙ КОНТЕНТ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 md:mt-10">
+        {/* Вернули классический items-start: колонки независимы друг от друга по высоте */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
-          {/* ЛЕВАЯ КОЛОНКА (Добавлено больше контента для баланса высоты) */}
+          {/* ЛЕВАЯ КОЛОНКА */}
           <div className="w-full lg:w-7/12 xl:w-2/3 space-y-10 md:space-y-12">
-            {/* Описание */}
             <div className="prose max-w-none text-gray-600 text-sm sm:text-base">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Информация о поездке
+                {t.tripInfo}
               </h2>
               <p>
-                Планируете поездку? Индивидуальный трансфер{" "}
+                {locale === "ru" &&
+                  `Планируете поездку? Индивидуальный трансфер по маршруту `}
+                {locale === "en" &&
+                  `Planning a trip? A private transfer on the route `}
+                {locale === "zh" && `计划旅行吗？在路线上进行私人接送 `}
                 <strong>
-                  {route.fromNameRu} — {route.toNameRu}
-                </strong>{" "}
-                от нашей компании — это гарантия того, что вы доберетесь до
-                места назначения с максимальным комфортом и точно в срок.
+                  {fromName} — {toName}
+                </strong>
+                {locale === "ru" &&
+                  ` от нашей компании — это гарантия того, что вы доберетесь до места назначения с максимальным комфортом и точно в срок.`}
+                {locale === "en" &&
+                  ` from our company is a guarantee that you will reach your destination with maximum comfort and exactly on time.`}
+                {locale === "zh" &&
+                  ` 我们公司保证您将以最舒适的方式准时到达目的地。`}
               </p>
-              <p>
-                Мы избавим вас от необходимости искать такси на месте,
-                торговаться с водителями или подстраиваться под расписание
-                общественного транспорта. Наш водитель встретит вас с табличкой,
-                поможет с багажом и обеспечит спокойную поездку.
-              </p>
+              {additionalContent && <p>{additionalContent}</p>}
             </div>
 
-            {/* Включено в стоимость */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                В стоимость включено
+                {t.featuresTitle}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   {
                     icon: Clock,
-                    title: "Ожидание",
-                    desc: "До 60 мин бесплатно",
+                    title: t.features.wait.title,
+                    desc: t.features.wait.desc,
                   },
                   {
                     icon: ShieldCheck,
-                    title: "Безопасность",
-                    desc: "Опытные водители",
+                    title: t.features.safety.title,
+                    desc: t.features.safety.desc,
                   },
-                  { icon: Wifi, title: "Wi-Fi", desc: "Бесплатный интернет" },
+                  {
+                    icon: Wifi,
+                    title: t.features.wifi.title,
+                    desc: t.features.wifi.desc,
+                  },
                   {
                     icon: Coffee,
-                    title: "Напитки",
-                    desc: "Вода в салоне авто",
+                    title: t.features.water.title,
+                    desc: t.features.water.desc,
                   },
                   {
                     icon: Baby,
-                    title: "Детское кресло",
-                    desc: "Бесплатно по запросу",
+                    title: t.features.baby.title,
+                    desc: t.features.baby.desc,
                   },
                   {
                     icon: CreditCard,
-                    title: "Оплата",
-                    desc: "Наличные или карта",
+                    title: t.features.payment.title,
+                    desc: t.features.payment.desc,
                   },
                 ].map((item, i) => (
                   <div
@@ -171,10 +204,9 @@ export default function TransferPageContent({
               </div>
             </div>
 
-            {/* Как мы работаем */}
             <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Как проходит поездка?
+                {t.howItWorks.title}
               </h2>
               <div className="space-y-6">
                 <div className="flex">
@@ -186,11 +218,10 @@ export default function TransferPageContent({
                   </div>
                   <div className="pb-2">
                     <h4 className="text-lg font-semibold text-gray-900">
-                      Оформление заявки
+                      {t.howItWorks.step1.title}
                     </h4>
                     <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                      Выберите тариф справа и заполните данные. Оператор
-                      подтвердит заказ в течение 5 минут.
+                      {t.howItWorks.step1.desc}
                     </p>
                   </div>
                 </div>
@@ -203,11 +234,10 @@ export default function TransferPageContent({
                   </div>
                   <div className="pb-2">
                     <h4 className="text-lg font-semibold text-gray-900">
-                      Встреча
+                      {t.howItWorks.step2.title}
                     </h4>
                     <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                      Водитель приедет заранее. Если это аэропорт — встретит вас
-                      в зоне прилета с табличкой.
+                      {t.howItWorks.step2.desc}
                     </p>
                   </div>
                 </div>
@@ -219,62 +249,53 @@ export default function TransferPageContent({
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900">
-                      Комфортная поездка
+                      {t.howItWorks.step3.title}
                     </h4>
                     <p className="text-gray-600 mt-1 text-sm sm:text-base">
-                      Поможем с багажом и с комфортом доставим точно по адресу.
-                      Оплата по прибытию.
+                      {t.howItWorks.step3.desc}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* FAQ */}
             <div>
               <div className="flex items-center gap-2 mb-6">
                 <HelpCircle className="w-6 h-6 text-[var(--gold)]" />
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Частые вопросы
+                  {t.faq.title}
                 </h2>
               </div>
               <div className="space-y-4">
-                {[
-                  {
-                    q: "А если мой рейс задержат?",
-                    a: "Не волнуйтесь! Мы бесплатно отслеживаем номера рейсов на онлайн-табло. Водитель приедет точно ко времени посадки самолета, даже если рейс сильно задержится.",
-                  },
-                  {
-                    q: "Цена в калькуляторе окончательная?",
-                    a: "Да. Вы платите ровно ту сумму, которая указана при бронировании. Никаких доплат за пробки, светофоры или ночное время.",
-                  },
-                  {
-                    q: "У вас есть детские кресла?",
-                    a: "Да, мы предоставляем детские кресла или бустеры абсолютно бесплатно. Просто укажите возраст ребенка при оформлении заказа.",
-                  },
-                ].map((faq, i) => (
-                  <div
-                    key={i}
-                    className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm"
-                  >
-                    <h4 className="font-bold text-gray-900 mb-2">{faq.q}</h4>
-                    <p className="text-gray-600 text-sm sm:text-base">
-                      {faq.a}
-                    </p>
-                  </div>
-                ))}
+                <div className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm">
+                  <h4 className="font-bold text-gray-900 mb-2">{t.faq.q1.q}</h4>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    {t.faq.q1.a}
+                  </p>
+                </div>
+                <div className="p-5 bg-white border border-gray-200 rounded-xl shadow-sm">
+                  <h4 className="font-bold text-gray-900 mb-2">{t.faq.q2.q}</h4>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    {t.faq.q2.a}
+                  </p>
+                </div>
               </div>
             </div>
+
+            {/* Блок популярных маршрутов (Сетка карточек) */}
+            {popularRoutes && popularRoutes.length > 0 && (
+              <PopularRoutesList locale={locale} routes={popularRoutes} />
+            )}
           </div>
 
           {/* ПРАВАЯ КОЛОНКА (Калькулятор) */}
-          {/* Убран sticky. Теперь форма ведет себя как обычный блок, не ломая верстку */}
+          {/* Вернули чистый, классический блок. Никаких sticky, никаких overflow. Прокручивается вместе со страницей */}
           <div className="w-full lg:w-5/12 xl:w-1/3">
             <CalculatorForm
-              locale="ru"
+              locale={locale}
               dbTariffs={tariffs}
-              initialFrom={route.fromNameRu}
-              initialTo={route.toNameRu}
+              initialFrom={fromName}
+              initialTo={toName}
               initialDistance={initialDistance}
               initialFromCoords={initialFromCoords}
               initialToCoords={initialToCoords}

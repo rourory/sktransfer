@@ -529,12 +529,13 @@ export function CalculatorForm({
                 <Card key={tariff.id} className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="relative w-20 h-14 sm:w-28 sm:h-16 bg-gray-50 rounded-xl overflow-hidden">
+                      <div className="relative w-24 h-16 sm:w-36 sm:h-24 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 shadow-sm">
                         <Image
                           src={tariff.imageUrl}
                           alt={displayName}
                           fill
-                          className="object-contain"
+                          className="object-cover object-center"
+                          sizes="(max-width: 640px) 96px, 144px"
                         />
                       </div>
                       <div>
