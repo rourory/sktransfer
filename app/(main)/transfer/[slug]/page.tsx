@@ -157,7 +157,7 @@ export default async function TransferPage({ params }: { params: Params }) {
       />
 
       <TransferPageContent
-        locale={locale} // ПРОКИДЫВАЕМ ЛОКАЛЬ
+        locale={locale}
         route={route}
         tariffs={tariffs}
         popularRoutes={popularRoutes}

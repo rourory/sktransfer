@@ -11,7 +11,8 @@
     "db:push": "prisma db push",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:seed-transfer": "npx tsx prisma/seed-transfer.ts",
-    "db:seed-tariffs": "tsx prisma/seed-tariffs.ts",
+    "db:seed-tariffs": "npx tsx prisma/seed-tariffs.ts",
+    "db:seed-airport-tariffs": "npx tsx prisma/seed-airport-tariffs.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {

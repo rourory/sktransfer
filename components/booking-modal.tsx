@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { type Locale, translations } from "@/lib/i18n";
 import { User, Phone, Mail, MessageSquare, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { reachGoal } from "@/lib/metrika";
 
 interface BookingModalProps {
   open: boolean;
@@ -49,6 +50,8 @@ export function BookingModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    reachGoal("booking_submit");
 
     try {
       let message = `${t.contact.form.name}: ${name}\n${t.contact.form.phone}: ${phone}`;

@@ -156,14 +156,14 @@ export function Header() {
 
               <Button
                 onClick={() => setContactModalOpen(true)}
-                className="hidden lg:flex items-center gap-2 bg-white text-gray-900 font-semibold hover:bg-gray-100 border border-white/30 shadow-lg shadow-white/10 hover:shadow-xl hover:shadow-white/20 transition-all duration-300 hover:scale-105 h-10 px-4 lg:px-6"
+                className="cursor-pointer hidden lg:flex items-center gap-2 bg-white text-gray-900 font-semibold hover:bg-gray-100 border border-white/30 shadow-lg shadow-white/10 hover:shadow-xl hover:shadow-white/20 transition-all duration-300 hover:scale-105 h-10 px-4 lg:px-6"
               >
                 <Sparkles className="h-4 w-4" />
                 <span className="text-sm lg:text-base">{t.nav.contacts}</span>
               </Button>
               <LanguageSwitcher
-                // currentLocale={locale}
-                // onLocaleChange={setLocale}
+              // currentLocale={locale}
+              // onLocaleChange={setLocale}
               />
 
               <Button

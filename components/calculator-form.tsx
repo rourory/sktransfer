@@ -39,9 +39,7 @@ export interface DbTariff {
 
 interface CalculatorFormProps {
   locale: Locale;
-  dbTariffs: DbTariff[];
-
-  // === НОВЫЕ ПРОПСЫ ДЛЯ ДИНАМИЧЕСКИХ СТРАНИЦ ===
+  dbTariffs: DbTariff[]; // Динамические тарифы из БД
   initialFrom?: string;
   initialTo?: string;
   initialDistance?: string;
@@ -57,6 +55,7 @@ interface AddressSuggestion {
   lon: number;
 }
 
+// Оставляем на крайний случай, если в базе данных вообще нет ни одного тарифа
 const FALLBACK_TARIFFS: DbTariff[] = [
   {
     id: "1",
@@ -69,25 +68,6 @@ const FALLBACK_TARIFFS: DbTariff[] = [
     key: "comfort",
     pricePerKm: 1.5,
     imageUrl: "/tariffs/comfort.webp",
-  },
-  {
-    id: "3",
-    key: "business",
-    pricePerKm: 3.0,
-    imageUrl: "/tariffs/business.webp",
-  },
-  {
-    id: "4",
-    key: "minivan",
-    pricePerKm: 2.2,
-    imageUrl: "/tariffs/minivan.webp",
-  },
-  { id: "5", key: "vip", pricePerKm: 3.0, imageUrl: "/tariffs/vip.webp" },
-  {
-    id: "6",
-    key: "minibus",
-    pricePerKm: 3.0,
-    imageUrl: "/tariffs/minibus.webp",
   },
 ];
 
@@ -102,6 +82,7 @@ export function CalculatorForm({
   preCalculatedResults = null,
   autoCalculateOnMount = false,
 }: CalculatorFormProps) {
+  // Используем тарифы из БД. Если массив пустой - берем Fallback
   const tariffs =
     dbTariffs && dbTariffs.length > 0 ? dbTariffs : FALLBACK_TARIFFS;
 
@@ -144,7 +125,7 @@ export function CalculatorForm({
 
   const t = translations[locale];
 
-  // ====================== Автозаполнение и автоподсчёт ======================
+  // Автозаполнение и автоподсчёт
   useEffect(() => {
     if (initialFrom) setFrom(initialFrom);
     if (initialTo) setTo(initialTo);
@@ -152,7 +133,6 @@ export function CalculatorForm({
     if (initialFromCoords) setFromCoords(initialFromCoords);
     if (initialToCoords) setToCoords(initialToCoords);
 
-    // Автоматический расчёт при загрузке динамической страницы
     if (
       autoCalculateOnMount &&
       initialDistance &&
@@ -160,6 +140,7 @@ export function CalculatorForm({
     ) {
       const dist = Number(initialDistance);
       const calculated: Record<string, number> = {};
+      // Динамический расчет на основе базы
       tariffs.forEach((tariff) => {
         calculated[tariff.key] = Number((dist * tariff.pricePerKm).toFixed(2));
       });
@@ -175,7 +156,6 @@ export function CalculatorForm({
     tariffs,
   ]);
 
-  // ====================== Остальная логика (без изменений) ======================
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -291,7 +271,6 @@ export function CalculatorForm({
         const route = data.routes[0];
         const distanceKm = (route.distance / 1000).toFixed(1);
         setDistance(distanceKm);
-
         const coordinates = route.geometry.coordinates.map(
           (coord: number[]) => [coord[1], coord[0]] as [number, number],
         );
@@ -349,6 +328,7 @@ export function CalculatorForm({
     setIsCalculating(true);
     setTimeout(() => {
       const calculated: Record<string, number> = {};
+      // Динамический расчет на основе базы
       tariffs.forEach((tariff) => {
         calculated[tariff.key] = Number((dist * tariff.pricePerKm).toFixed(2));
       });
@@ -357,10 +337,16 @@ export function CalculatorForm({
     }, 300);
   };
 
+  const getDisplayName = (tariffKey: string) => {
+    // Пытаемся найти перевод в словаре, если нет — возвращаем ключ с большой буквы
+    if (t.tariffs && t.tariffs[tariffKey as keyof typeof t.tariffs]) {
+      return t.tariffs[tariffKey as keyof typeof t.tariffs];
+    }
+    return tariffKey.charAt(0).toUpperCase() + tariffKey.slice(1);
+  };
+
   const handleBooking = (tariffKey: string) => {
-    const tariffName =
-      t.tariffs?.[tariffKey as keyof typeof t.tariffs] || tariffKey;
-    setSelectedBookingTariff(tariffName);
+    setSelectedBookingTariff(getDisplayName(tariffKey));
     setBookingModalOpen(true);
   };
 
@@ -397,7 +383,6 @@ export function CalculatorForm({
               />
             </div>
 
-            {/* Откуда */}
             <div className="space-y-2" ref={fromInputRef}>
               <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <MapPin className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
@@ -434,7 +419,6 @@ export function CalculatorForm({
               </div>
             </div>
 
-            {/* Куда */}
             {!isCityTour && (
               <div className="space-y-2" ref={toInputRef}>
                 <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
@@ -473,7 +457,6 @@ export function CalculatorForm({
               </div>
             )}
 
-            {/* Расстояние */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <TrendingUp className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
@@ -494,7 +477,6 @@ export function CalculatorForm({
               </div>
             </div>
 
-            {/* Кнопка расчёта */}
             <Button
               onClick={calculateAllPrices}
               disabled={!distance || Number.parseFloat(distance) <= 0}
@@ -515,15 +497,13 @@ export function CalculatorForm({
           </div>
         </Card>
 
-        {/* Результаты тарифов */}
         {results && (
           <div className="grid gap-3 sm:gap-4 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
             {tariffs.map((tariff) => {
               const price = results[tariff.key];
               if (price === undefined) return null;
 
-              const displayName =
-                t.tariffs?.[tariff.key as keyof typeof t.tariffs] || tariff.key;
+              const displayName = getDisplayName(tariff.key);
 
               return (
                 <Card key={tariff.id} className="p-4 sm:p-6">
@@ -558,7 +538,8 @@ export function CalculatorForm({
                     onClick={() => handleBooking(tariff.key)}
                     className="w-full mt-4 gold-gradient"
                   >
-                    Забронировать этот тариф
+                    {/* Если есть перевод текста кнопки - берем его, иначе хардкод */}
+                    {t.calculator.bookThisTariff || "Забронировать этот тариф"}
                   </Button>
                 </Card>
               );

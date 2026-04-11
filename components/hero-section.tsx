@@ -9,7 +9,6 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ locale }: HeroSectionProps) {
-  // Получаем переводы для секции hero для текущего языка
   const t = translations[locale].hero;
 
   return (

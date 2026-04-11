@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getLocaleOnServer } from "@/lib/get-locale-on-server";
 import { translations } from "@/lib/i18n";
 import { CalculatorForm } from "@/components/calculator-form";
-import { AirportTariffs } from "@/components/airport-tariffs";
+import { AirportTariffs } from "@/components/airport-tariffs/airport-tariffs";
 import prisma from "@/lib/prisma";
 
 const BASE_URL = "https://sktransfer.by";
@@ -53,6 +53,11 @@ export default async function CalculatorPage() {
   const t = translations[locale];
 
   const dbTariffs = await prisma.tariff.findMany({
+    where: { isActive: true },
+    orderBy: { order: "asc" },
+  });
+
+  const dbAirportTariffs = await prisma.airportTariff.findMany({
     where: { isActive: true },
     orderBy: { order: "asc" },
   });
@@ -116,8 +121,8 @@ export default async function CalculatorPage() {
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-16">
-              <CalculatorForm locale={locale} dbTariffs={dbTariffs}/>
-              <AirportTariffs locale={locale} />
+              <CalculatorForm locale={locale} dbTariffs={dbTariffs} />
+              <AirportTariffs locale={locale} dbTariffs={dbAirportTariffs} />
             </div>
 
             <section className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 sm:p-10 border border-gray-100 shadow-sm mt-12">

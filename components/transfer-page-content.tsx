@@ -1,6 +1,5 @@
-"use client";
-
-import { CalculatorForm, type DbTariff } from "@/components/calculator-form";
+import { type DbTariff } from "@/components/calculator-form";
+import { CalculatorFormClient } from "./calculator-form-client";
 import { PopularRoutesList } from "@/components/popular-routes-list";
 import { type Locale, translations } from "@/lib/i18n";
 import {
@@ -291,7 +290,7 @@ export default function TransferPageContent({
           {/* ПРАВАЯ КОЛОНКА (Калькулятор) */}
           {/* Вернули чистый, классический блок. Никаких sticky, никаких overflow. Прокручивается вместе со страницей */}
           <div className="w-full lg:w-5/12 xl:w-1/3">
-            <CalculatorForm
+            <CalculatorFormClient
               locale={locale}
               dbTariffs={tariffs}
               initialFrom={fromName}

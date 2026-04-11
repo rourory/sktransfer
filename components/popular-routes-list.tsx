@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Navigation, ArrowRight } from "lucide-react";
 import { type Locale, translations } from "@/lib/i18n";

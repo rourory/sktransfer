@@ -159,3 +159,25 @@ model TransferRoute {
   @@index([fromSlug, toSlug])
   @@index([isPopular])
 }
+
+model AirportTariff {
+  id          String   @id @default(cuid())
+  tariffKey   String   @unique  // Системный ключ (standard, comfort...)
+  price       Float    // Цена в BYN
+  
+  // Локализованные названия тарифа (Стандарт, Standard, 标准)
+  nameRu      String
+  nameEn      String
+  nameZh      String?
+
+  // Локализованные особенности (через запятую)
+  featuresRu  String   
+  featuresEn  String
+  featuresZh  String?
+  
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

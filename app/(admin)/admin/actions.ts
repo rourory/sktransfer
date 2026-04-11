@@ -158,25 +158,38 @@ export async function saveRoute(id: string | null, formData: FormData) {
     slug: formData.get("slug") as string,
     fromSlug: formData.get("fromSlug") as string,
     toSlug: formData.get("toSlug") as string,
-    
+
     distanceKm: parseFloat(formData.get("distanceKm") as string),
-    durationMin: formData.get("durationMin") ? parseInt(formData.get("durationMin") as string) : null,
-    
-    fromLat: formData.get("fromLat") ? parseFloat(formData.get("fromLat") as string) : null,
-    fromLon: formData.get("fromLon") ? parseFloat(formData.get("fromLon") as string) : null,
-    toLat: formData.get("toLat") ? parseFloat(formData.get("toLat") as string) : null,
-    toLon: formData.get("toLon") ? parseFloat(formData.get("toLon") as string) : null,
+    durationMin: formData.get("durationMin")
+      ? parseInt(formData.get("durationMin") as string)
+      : null,
+
+    fromLat: formData.get("fromLat")
+      ? parseFloat(formData.get("fromLat") as string)
+      : null,
+    fromLon: formData.get("fromLon")
+      ? parseFloat(formData.get("fromLon") as string)
+      : null,
+    toLat: formData.get("toLat")
+      ? parseFloat(formData.get("toLat") as string)
+      : null,
+    toLon: formData.get("toLon")
+      ? parseFloat(formData.get("toLon") as string)
+      : null,
 
     fromNameRu: formData.get("fromNameRu") as string,
     fromNameEn: formData.get("fromNameEn") as string,
-    fromNameZh: formData.get("fromNameZh") as string || null,
+    fromNameZh: (formData.get("fromNameZh") as string) || null,
     toNameRu: formData.get("toNameRu") as string,
     toNameEn: formData.get("toNameEn") as string,
-    toNameZh: formData.get("toNameZh") as string || null,
+    toNameZh: (formData.get("toNameZh") as string) || null,
 
-    additionalContentRu: formData.get("additionalContentRu") as string || null,
-    additionalContentEn: formData.get("additionalContentEn") as string || null,
-    additionalContentZh: formData.get("additionalContentZh") as string || null,
+    additionalContentRu:
+      (formData.get("additionalContentRu") as string) || null,
+    additionalContentEn:
+      (formData.get("additionalContentEn") as string) || null,
+    additionalContentZh:
+      (formData.get("additionalContentZh") as string) || null,
 
     isPopular: formData.get("isPopular") === "true",
     isAirport: formData.get("isAirport") === "true",
@@ -196,4 +209,36 @@ export async function saveRoute(id: string | null, formData: FormData) {
 export async function deleteRoute(id: string) {
   await prisma.transferRoute.delete({ where: { id } });
   revalidatePath("/admin/routes");
+}
+
+export async function saveAirportTariff(id: string | null, formData: FormData) {
+  const data = {
+    tariffKey: formData.get("tariffKey") as string,
+    price: parseFloat(formData.get("price") as string),
+
+    nameRu: formData.get("nameRu") as string,
+    nameEn: formData.get("nameEn") as string,
+    nameZh: (formData.get("nameZh") as string) || null,
+
+    featuresRu: formData.get("featuresRu") as string,
+    featuresEn: formData.get("featuresEn") as string,
+    featuresZh: (formData.get("featuresZh") as string) || null,
+
+    isActive: formData.get("isActive") === "true",
+    order: parseInt(formData.get("order") as string) || 0,
+  };
+
+  if (id) {
+    await prisma.airportTariff.update({ where: { id }, data });
+  } else {
+    await prisma.airportTariff.create({ data });
+  }
+
+  revalidatePath("/admin/airport-tariffs");
+  redirect("/admin/airport-tariffs");
+}
+
+export async function deleteAirportTariff(id: string) {
+  await prisma.airportTariff.delete({ where: { id } });
+  revalidatePath("/admin/airport-tariffs");
 }
