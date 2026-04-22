@@ -8,6 +8,7 @@ import ConsentProvider from "@/components/consent/consent-provider";
 import { VisitorTracker } from "@/components/tracker/visitor-tracker";
 import { translations } from "@/lib/i18n";
 
+//@ts-ignore
 import "./globals.css";
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -268,7 +269,7 @@ export default async function RootLayout({
         <meta name="geo.placename" content="Minsk" />
         <meta name="geo.position" content="53.9045;27.5615" />
         <meta name="ICBM" content="53.9045, 27.5615" />
-		<meta name="yandex-verification" content="901eebd15b4a8b29" />
+        <meta name="yandex-verification" content="901eebd15b4a8b29" />
 
         <meta httpEquiv="content-language" content="ru, en, zh" />
         <meta name="language" content="Russian" />

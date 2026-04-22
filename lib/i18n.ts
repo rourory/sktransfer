@@ -174,9 +174,33 @@ export const translations = {
     //   showLess: "Скрыть",
     // },
     services: {
-      title: "Наши услуги",
+      transfers: "Трансферы",
+      transfersDesc: "По Беларуси, России, СНГ и Европе",
+      transfersDetails:
+        "Мы организуем комфортные поездки на любые расстояния. Опытные водители, современные автомобили, точность и пунктуальность. Поездки в аэропорты, города, курорты. Индивидуальный подход к каждому клиенту.",
+      excursions: "Экскурсии",
+      excursionsDesc: "Индивидуальные туры с профессиональными гидами",
+      excursionsDetails:
+        "Познавательные экскурсии по Минску и всей Беларуси. Профессиональные гиды с многолетним опытом. Индивидуальные маршруты под ваши интересы. Экскурсии на русском, английском и других языках.",
+      resorts: "Санатории и курорты",
+      resortsDesc: "Трансфер в лучшие санатории и горнолыжные комплексы",
+      resortsDetails:
+        "Доставка в санатории, spa-центры и горнолыжные курорты Беларуси. Комфортабельные автомобили для поездок на отдых. Помощь с багажом, встреча с табличкой. Фиксированные цены без скрытых доплат.",
+      airport: "Аэропорт",
+      airportDesc: "Встреча и проводы с табличкой",
+      airportDetails:
+        "Трансфер из/в аэропорт Минска. Встреча с именной табличкой в зале прилета. Помощь с багажом. Отслеживание рейсов. Бесплатное ожидание 60 минут при задержке рейса.",
+      vip: "VIP обслуживание",
+      vipDesc: "Эксклюзивный сервис премиум-класса",
+      vipDetails:
+        "Премиум-автомобили представительского класса. Персональный водитель-помощник. Напитки и пресса в салоне. Абсолютная конфиденциальность. Индивидуальный маршрут и график поездок.",
+      business: "Деловые поездки",
+      businessDesc: "Комфортные перевозки для бизнеса",
+      businessDetails:
+        "Организация корпоративных поездок. Трансферы на деловые встречи, конференции, форумы. Почасовая аренда автомобиля с водителем. Wi-Fi в салоне. Система отчетности для бухгалтерии.",
       showMore: "Подробнее",
       showLess: "Скрыть",
+      title: "Наши услуги",
       bookNow: "Забронировать", // Новая кнопка
       items: [
         {
@@ -696,6 +720,30 @@ export const translations = {
     //   showLess: "Hide",
     // },
     services: {
+      transfers: "Transfers",
+      transfersDesc: "Across Belarus, Russia, CIS and Europe",
+      transfersDetails:
+        "We organize comfortable trips for any distance. Experienced drivers, modern cars, accuracy and punctuality. Trips to airports, cities, resorts. Individual approach to each client.",
+      excursions: "Excursions",
+      excursionsDesc: "Individual tours with professional guides",
+      excursionsDetails:
+        "Educational tours around Minsk and all of Belarus. Professional guides with years of experience. Individual routes tailored to your interests. Tours in Russian, English and other languages.",
+      resorts: "Resorts & Sanatoriums",
+      resortsDesc: "Transfer to the best sanatoriums and ski resorts",
+      resortsDetails:
+        "Delivery to sanatoriums, spa centers and ski resorts in Belarus. Comfortable cars for leisure trips. Luggage assistance, meet and greet with sign. Fixed prices with no hidden fees.",
+      airport: "Airport",
+      airportDesc: "Meet and greet with sign",
+      airportDetails:
+        "Transfer from/to Minsk airport. Meet and greet with name sign in arrivals hall. Luggage assistance. Flight tracking. Free 60 minutes waiting for delayed flights.",
+      vip: "VIP service",
+      vipDesc: "Exclusive premium service",
+      vipDetails:
+        "Premium executive class vehicles. Personal driver-assistant. Drinks and press in the cabin. Absolute confidentiality. Individual route and travel schedule.",
+      business: "Business trips",
+      businessDesc: "Comfortable business transportation",
+      businessDetails:
+        "Organization of corporate trips. Transfers to business meetings, conferences, forums. Hourly car rental with driver. Wi-Fi in the cabin. Reporting system for accounting.",
       title: "Our Services",
       showMore: "Show more",
       showLess: "Show less",
@@ -1216,6 +1264,30 @@ export const translations = {
     //   showLess: "隐藏",
     // },
     services: {
+      transfers: "接送服务",
+      transfersDesc: "遍及白俄罗斯、俄罗斯、独联体和欧洲",
+      transfersDetails:
+        "我们为任何距离组织舒适的旅行。经验丰富的司机，现代化的汽车，准确和准时。前往机场、城市、度假村的旅行。对每位客户的个性化方法。",
+      excursions: "游览",
+      excursionsDesc: "与专业导游的个人游览",
+      excursionsDetails:
+        "明斯克和整个白俄罗斯的教育之旅。拥有多年经验的专业导游。根据您的兴趣定制的个人路线。俄语、英语和其他语言的游览。",
+      resorts: "度假村和疗养院",
+      resortsDesc: "前往最佳疗养院和滑雪胜地的接送服务",
+      resortsDetails:
+        "送往白俄罗斯的疗养院、水疗中心和滑雪胜地。休闲旅行的舒适汽车。行李协助，带标牌的接送服务。固定价格，无隐藏费用。",
+      airport: "机场",
+      airportDesc: "带标牌的接送服务",
+      airportDetails:
+        "往返明斯克机场的接送服务。在到达大厅用姓名标牌迎接。行李协助。航班跟踪。延误航班免费等待60分钟。",
+      vip: "VIP服务",
+      vipDesc: "独家高端服务",
+      vipDetails:
+        "高端行政级车辆。私人司机助理。客舱内的饮料和报刊。绝对保密。个性化路线和旅行时间表。",
+      business: "商务旅行",
+      businessDesc: "舒适的商务运输",
+      businessDetails:
+        "组织企业旅行。前往商务会议、会议、论坛的接送服务。带司机的按小时租车。客舱内的Wi-Fi。会计报告系统。",
       title: "我们的服务",
       showMore: "查看更多",
       showLess: "收起",

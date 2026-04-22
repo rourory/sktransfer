@@ -55,7 +55,7 @@ export async function generateMetadata({
       title: titles[locale],
       description: descriptions[locale],
       type: "website",
-      locale: locale === "ru" ? "ru_RU" : locale === "en" ? "en_US" : "zh_CN",
+      // locale: locale === "ru" ? "ru_RU" : locale === "en" ? "en_US" : "zh_CN",
       siteName: "SKTransfer",
     },
     alternates: {

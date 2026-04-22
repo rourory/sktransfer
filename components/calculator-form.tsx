@@ -71,6 +71,17 @@ const FALLBACK_TARIFFS: DbTariff[] = [
   },
 ];
 
+function useDebounce(value: any, delay: any) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export function CalculatorForm({
   locale,
   dbTariffs,
@@ -89,6 +100,12 @@ export function CalculatorForm({
   const [from, setFrom] = useState(initialFrom);
   const [to, setTo] = useState(initialTo);
   const [distance, setDistance] = useState(initialDistance);
+
+  const [fromError, setFromError] = useState(false);
+  const [toError, setToError] = useState(false);
+
+  const debouncedFrom = useDebounce(from, 500);
+  const debouncedTo = useDebounce(to, 500);
 
   const [fromSuggestions, setFromSuggestions] = useState<AddressSuggestion[]>(
     [],
@@ -121,7 +138,7 @@ export function CalculatorForm({
 
   const fromInputRef = useRef<HTMLDivElement>(null);
   const toInputRef = useRef<HTMLDivElement>(null);
-  const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  // const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const t = translations[locale];
 
@@ -189,72 +206,72 @@ export function CalculatorForm({
     return parts.length > 0 ? parts.join(", ") : "Неизвестный адрес";
   };
 
-  const fetchAddressSuggestions = async (
-    query: string,
-    isFromField: boolean,
-  ) => {
-    if (query.length < 3) {
-      if (isFromField) {
-        setFromSuggestions([]);
-        setShowFromSuggestions(false);
-      } else {
-        setToSuggestions([]);
-        setShowToSuggestions(false);
-      }
-      return;
-    }
+  // const fetchAddressSuggestions = async (
+  //   query: string,
+  //   isFromField: boolean,
+  // ) => {
+  //   if (query.length < 3) {
+  //     if (isFromField) {
+  //       setFromSuggestions([]);
+  //       setShowFromSuggestions(false);
+  //     } else {
+  //       setToSuggestions([]);
+  //       setShowToSuggestions(false);
+  //     }
+  //     return;
+  //   }
 
-    if (isFromField) setIsSearchingFrom(true);
-    else setIsSearchingTo(true);
+  //   if (isFromField) setIsSearchingFrom(true);
+  //   else setIsSearchingTo(true);
 
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+  //   if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
 
-    searchTimerRef.current = setTimeout(async () => {
-      try {
-        const smartQuery = query.replace(/([а-яА-Яa-zA-Z])\s+(\d+)/g, "$1, $2");
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?` +
-            new URLSearchParams({
-              format: "json",
-              q: smartQuery,
-              limit: "5",
-              addressdetails: "1",
-              "accept-language": locale === "ru" ? "ru" : "en",
-              countrycodes: "by,ru,pl,lt,lv",
-            }),
-          { headers: { "User-Agent": "SKTransfer.by" } },
-        );
+  //   searchTimerRef.current = setTimeout(async () => {
+  //     try {
+  //       const smartQuery = query.replace(/([а-яА-Яa-zA-Z])\s+(\d+)/g, "$1, $2");
+  //       const response = await fetch(
+  //         `https://nominatim.openstreetmap.org/search?` +
+  //           new URLSearchParams({
+  //             format: "json",
+  //             q: smartQuery,
+  //             limit: "5",
+  //             addressdetails: "1",
+  //             "accept-language": locale === "ru" ? "ru" : "en",
+  //             countrycodes: "by,ru,pl,lt,lv",
+  //           }),
+  //         { headers: { "User-Agent": "SKTransfer.by" } },
+  //       );
 
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
+  //       if (!response.ok)
+  //         throw new Error(`HTTP error! status: ${response.status}`);
 
-        const data = await response.json();
-        const suggestions: AddressSuggestion[] = data.map((item: any) => ({
-          display_name: formatNominatimAddress(item.address, item.name),
-          lat: Number(item.lat),
-          lon: Number(item.lon),
-        }));
+  //       const data = await response.json();
+  //       const suggestions: AddressSuggestion[] = data.map((item: any) => ({
+  //         display_name: formatNominatimAddress(item.address, item.name),
+  //         lat: Number(item.lat),
+  //         lon: Number(item.lon),
+  //       }));
 
-        const uniqueSuggestions = suggestions.filter(
-          (v, i, a) =>
-            a.findIndex((t) => t.display_name === v.display_name) === i,
-        );
+  //       const uniqueSuggestions = suggestions.filter(
+  //         (v, i, a) =>
+  //           a.findIndex((t) => t.display_name === v.display_name) === i,
+  //       );
 
-        if (isFromField) {
-          setFromSuggestions(uniqueSuggestions);
-          setShowFromSuggestions(uniqueSuggestions.length > 0);
-        } else {
-          setToSuggestions(uniqueSuggestions);
-          setShowToSuggestions(uniqueSuggestions.length > 0);
-        }
-      } catch (error) {
-        console.error("Error fetching addresses:", error);
-      } finally {
-        if (isFromField) setIsSearchingFrom(false);
-        else setIsSearchingTo(false);
-      }
-    }, 500);
-  };
+  //       if (isFromField) {
+  //         setFromSuggestions(uniqueSuggestions);
+  //         setShowFromSuggestions(uniqueSuggestions.length > 0);
+  //       } else {
+  //         setToSuggestions(uniqueSuggestions);
+  //         setShowToSuggestions(uniqueSuggestions.length > 0);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching addresses:", error);
+  //     } finally {
+  //       if (isFromField) setIsSearchingFrom(false);
+  //       else setIsSearchingTo(false);
+  //     }
+  //   }, 500);
+  // };
 
   const fetchRouteAndDistance = async (
     startLat: number,
@@ -350,11 +367,117 @@ export function CalculatorForm({
     setBookingModalOpen(true);
   };
 
+  // useEffect(() => {
+  //   return () => {
+  //     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+  //   };
+  // }, []);
   useEffect(() => {
-    return () => {
-      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    };
-  }, []);
+    fetchSuggestions(debouncedFrom, true);
+  }, [debouncedFrom]);
+
+  useEffect(() => {
+    if (!isCityTour) {
+      fetchSuggestions(debouncedTo, false);
+    }
+  }, [debouncedTo, isCityTour]);
+
+  const fetchSuggestions = async (query: any, isFromField: boolean) => {
+    if (query.length < 3) {
+      if (isFromField) {
+        setFromSuggestions([]);
+        setShowFromSuggestions(false);
+        setFromError(false);
+      } else {
+        setToSuggestions([]);
+        setShowToSuggestions(false);
+        setToError(false);
+      }
+      return;
+    }
+
+    if (isFromField) setIsSearchingFrom(true);
+    else setIsSearchingTo(true);
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?` +
+          new URLSearchParams({
+            format: "json",
+            q: query,
+            limit: "5",
+            addressdetails: "1",
+            "accept-language": locale === "ru" ? "ru" : "en",
+            countrycodes: "by,ru,pl,lt,lv",
+          }),
+        { headers: { "User-Agent": "SKTransfer.by" } },
+      );
+
+      const data = await response.json();
+
+      const suggestions = data.map((item: any) => ({
+        display_name: formatNominatimAddress(item.address, item.name),
+        lat: Number(item.lat),
+        lon: Number(item.lon),
+      }));
+
+      if (isFromField) {
+        setFromSuggestions(suggestions);
+        setShowFromSuggestions(suggestions.length > 0);
+
+        if (suggestions.length > 0) {
+          const first = suggestions[0];
+          // setFrom(first.display_name);
+          setFromCoords({ lat: first.lat, lon: first.lon });
+          setFromError(false);
+        } else {
+          setFromCoords(null);
+          setFromError(true);
+        }
+      } else {
+        setToSuggestions(suggestions);
+        setShowToSuggestions(suggestions.length > 0);
+
+        if (suggestions.length > 0) {
+          const first = suggestions[0];
+          // setTo(first.display_name);
+          setToCoords({ lat: first.lat, lon: first.lon });
+          setToError(false);
+        } else {
+          setToCoords(null);
+          setToError(true);
+        }
+      }
+    } catch (e) {
+      if (isFromField) setFromError(true);
+      else setToError(true);
+    } finally {
+      if (isFromField) setIsSearchingFrom(false);
+      else setIsSearchingTo(false);
+    }
+  };
+
+  const applyDefaultIfNeeded = (isFromField: boolean) => {
+    if (isFromField) {
+      if (!fromCoords && fromSuggestions.length > 0) {
+        const first = fromSuggestions[0];
+        setFrom(first.display_name);
+        setFromCoords({ lat: first.lat, lon: first.lon });
+        setFromError(false);
+      } else if (!fromCoords) {
+        setFromError(true);
+      }
+    } else {
+      if (!toCoords && toSuggestions.length > 0) {
+        const first = toSuggestions[0];
+        setTo(first.display_name);
+        setToCoords({ lat: first.lat, lon: first.lon });
+        setToError(false);
+      } else if (!toCoords) {
+        setToError(true);
+      }
+    }
+  };
 
   return (
     <>
@@ -392,11 +515,21 @@ export function CalculatorForm({
                 <Input
                   placeholder="Минск, Независимости"
                   value={from}
+                  // onChange={(e) => {
+                  //   setFrom(e.target.value);
+                  //   fetchAddressSuggestions(e.target.value, true);
+                  // }}
+                  onBlur={() => applyDefaultIfNeeded(true)}
                   onChange={(e) => {
                     setFrom(e.target.value);
-                    fetchAddressSuggestions(e.target.value, true);
+                    setFromCoords(null);
                   }}
-                  className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
+                  // className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
+                  className={`pl-10 border-2 w-full ${
+                    fromError
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-gray-200 focus:border-[var(--gold)]"
+                  }`}
                 />
                 {isSearchingFrom ? (
                   <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)] animate-spin" />
@@ -429,11 +562,21 @@ export function CalculatorForm({
                   <Input
                     placeholder="Гродно / Нарочь / Внуково"
                     value={to}
+                    // onChange={(e) => {
+                    //   setTo(e.target.value);
+                    //   fetchAddressSuggestions(e.target.value, false);
+                    // }}
+                    onBlur={() => applyDefaultIfNeeded(false)}
                     onChange={(e) => {
                       setTo(e.target.value);
-                      fetchAddressSuggestions(e.target.value, false);
+                      setToCoords(null);
                     }}
-                    className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
+                    // className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
+                    className={`pl-10 border-2 w-full ${
+                      toError
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-gray-200 focus:border-[var(--gold)]"
+                    }`}
                   />
                   {isSearchingTo ? (
                     <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gold)] animate-spin" />

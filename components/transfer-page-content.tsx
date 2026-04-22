@@ -72,19 +72,19 @@ export default function TransferPageContent({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="text-sm text-gray-500 mb-6 flex items-center space-x-2">
             <Link
-              href={`/${locale}`}
+              href={`/`}
               className="hover:text-[var(--gold)] transition-colors"
             >
               {t.breadcrumbs.home}
             </Link>
             <span>/</span>
-            <Link
-              href={`/${locale}/transfers`}
+            {/* <Link
+              href={`/transfers`}
               className="hover:text-[var(--gold)] transition-colors"
             >
               {t.breadcrumbs.transfers}
             </Link>
-            <span>/</span>
+            <span>/</span> */}
             <span className="text-gray-900 font-medium">{toName}</span>
           </nav>
 
