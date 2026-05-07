@@ -9,6 +9,7 @@ import { CTASection } from "@/components/cta-section";
 import type { Locale } from "@/lib/i18n";
 import prisma from "@/lib/prisma";
 import { PopularRoutesList } from "@/components/popular-routes-list";
+import { PartnersSection } from "@/components/partners-section";
 
 export default async function Home() {
   // Получаем текущий язык из куки (без использования useLanguage!)
@@ -51,6 +52,7 @@ export default async function Home() {
           <PopularRoutesList locale={locale} routes={popularRoutes} />
         </div>
       )}
+      <PartnersSection locale={locale} />
       <CTASection locale={locale} />
     </main>
   );

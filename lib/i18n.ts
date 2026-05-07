@@ -2,6 +2,16 @@ export type Locale = "ru" | "en" | "zh";
 
 export const translations = {
   ru: {
+    partners: {
+      title: "Наши партнеры",
+      subtitle: "Места и компании, которые мы смело рекомендуем нашим клиентам",
+      vprostore: {
+        title: "Агроусадьба «В просторе»",
+        description:
+          "Идеальное место для отдыха на природе. Мы организуем для вас комфортный трансфер премиум-класса прямо к дверям усадьбы, поможем с логистикой и гарантируем высший уровень сервиса. Отличный выбор для выходных или проведения мероприятий!",
+        btn: "Перейти на сайт",
+      },
+    },
     transferPage: {
       breadcrumbs: { home: "Главная", transfers: "Направления" },
       title: "Трансфер",
@@ -74,7 +84,7 @@ export const translations = {
     hero: {
       titleWhite: "Трансферы по Беларуси,",
       titleGold: "России и Европе",
-      subtitle: "Встреча в аэропорту с табличкой • Комфорт премиум-класса",
+      subtitle: "Встреча в аэропорту с табличкой • Комфорт на любой бюджет",
       cta: "Рассчитать стоимость",
       fleetBtn: "Наш автопарк",
       excursionsBtn: "Экскурсии",
@@ -548,6 +558,16 @@ export const translations = {
     },
   },
   en: {
+    partners: {
+      title: "Our Partners",
+      subtitle: "Places and companies we confidently recommend to our clients",
+      vprostore: {
+        title: "Agro-estate «Vprostore»",
+        description:
+          "The perfect place for outdoor recreation. We will organize a comfortable premium transfer right to the doors of the estate, help with logistics, and guarantee the highest level of service. Highly recommended for your events and weekends!",
+        btn: "Visit website",
+      },
+    },
     transferPage: {
       breadcrumbs: { home: "Home", transfers: "Destinations" },
       title: "Transfer",
@@ -1096,6 +1116,16 @@ export const translations = {
     },
   },
   zh: {
+    partners: {
+      title: "我们的合作伙伴",
+      subtitle: "我们向客户放心推荐的地方和公司",
+      vprostore: {
+        title: "农庄 «Vprostore»",
+        description:
+          "户外休闲的绝佳去处。我们将为您安排直接到农庄门口的舒适高级接送服务，协助处理物流，并保证最高水平的服务。强烈推荐用于您的活动和周末！",
+        btn: "访问网站",
+      },
+    },
     transferPage: {
       breadcrumbs: { home: "主页", transfers: "目的地" },
       title: "接送",
