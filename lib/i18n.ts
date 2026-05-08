@@ -6,7 +6,7 @@ export const translations = {
       title: "Наши партнеры",
       subtitle: "Места и компании, которые мы смело рекомендуем нашим клиентам",
       vprostore: {
-        title: "Агроусадьба «В просторе»",
+        title: "Агроусадьба «Вилейские просторы»",
         description:
           "Идеальное место для отдыха на природе. Мы организуем для вас комфортный трансфер премиум-класса прямо к дверям усадьбы, поможем с логистикой и гарантируем высший уровень сервиса. Отличный выбор для выходных или проведения мероприятий!",
         btn: "Перейти на сайт",
@@ -562,7 +562,7 @@ export const translations = {
       title: "Our Partners",
       subtitle: "Places and companies we confidently recommend to our clients",
       vprostore: {
-        title: "Agro-estate «Vprostore»",
+        title: "Agro-estate Vileiskie Prostory",
         description:
           "The perfect place for outdoor recreation. We will organize a comfortable premium transfer right to the doors of the estate, help with logistics, and guarantee the highest level of service. Highly recommended for your events and weekends!",
         btn: "Visit website",
@@ -1120,7 +1120,7 @@ export const translations = {
       title: "我们的合作伙伴",
       subtitle: "我们向客户放心推荐的地方和公司",
       vprostore: {
-        title: "农庄 «Vprostore»",
+        title: "农庄 Vileiskie Prostory",
         description:
           "户外休闲的绝佳去处。我们将为您安排直接到农庄门口的舒适高级接送服务，协助处理物流，并保证最高水平的服务。强烈推荐用于您的活动和周末！",
         btn: "访问网站",

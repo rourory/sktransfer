@@ -26,13 +26,13 @@ export function PartnersSection({ locale }: PartnersSectionProps) {
 
         {/* Сетка партнеров (пока одна карточка, но готова для добавления новых) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-          {/* Карточка партнера: В просторе */}
+          {/* Карточка партнера: Вилейские просторы */}
           <div className="group flex flex-col bg-white rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
             {/* Изображение усадьбы */}
             <div className="relative h-64 w-full overflow-hidden bg-gray-100">
               <Image
                 src="/partners/agrousadba-vileiske-prostory.jpg" // Замените на реальное фото!
-                alt="Агроусадьба В просторе"
+                alt="Агроусадьба Вилейские просторы"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
