@@ -11,6 +11,12 @@ export const translations = {
           "Идеальное место для отдыха на природе. Мы организуем для вас комфортный трансфер премиум-класса прямо к дверям усадьбы, поможем с логистикой и гарантируем высший уровень сервиса. Отличный выбор для выходных или проведения мероприятий!",
         btn: "Перейти на сайт",
       },
+      klevoe: {
+        title: "Кемпинг «Клевое место»",
+        description:
+          "Идеальное место для отдыха на природе, проведение мероприятий и тимбилдинга. Мы берём на себя организацию трансфера к кемпингу, обеспечиваем комфортные автомобили и профессиональных водителей. Отличный выбор для выходных на природе или корпоративного отдыха!",
+        btn: "Перейти на сайт",
+      },
     },
     transferPage: {
       breadcrumbs: { home: "Главная", transfers: "Направления" },
@@ -566,6 +572,12 @@ export const translations = {
         description:
           "The perfect place for outdoor recreation. We will organize a comfortable premium transfer right to the doors of the estate, help with logistics, and guarantee the highest level of service. Highly recommended for your events and weekends!",
         btn: "Visit website",
+      },
+      klevoe: {
+        title: "Klevoe Mesto Campsite",
+        description:
+          "The perfect place for outdoor recreation, events, and team-building activities. We take care of transportation to the campsite, providing comfortable vehicles and professional drivers. An excellent choice for a nature getaway or corporate retreat!",
+        btn: "Visit Website",
       },
     },
     transferPage: {
@@ -1123,6 +1135,12 @@ export const translations = {
         title: "农庄 Vileiskie Prostory",
         description:
           "户外休闲的绝佳去处。我们将为您安排直接到农庄门口的舒适高级接送服务，协助处理物流，并保证最高水平的服务。强烈推荐用于您的活动和周末！",
+        btn: "访问网站",
+      },
+      klevoe: {
+        title: "“Klevoe Mesto” 露营地",
+        description:
+          "一个适合户外休闲、活动举办和团队建设的理想场所。我们提供前往露营地的接送服务，配备舒适的车辆和专业司机。这里是周末亲近自然或企业团建的绝佳选择！",
         btn: "访问网站",
       },
     },
