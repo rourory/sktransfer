@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { type Locale, translations } from "@/lib/i18n";
 import Link from "next/link";
-// ДОБАВИЛИ ИКОНКУ Phone
 import { Calculator, Car, Compass, Phone } from "lucide-react";
 import Image from "next/image";
 import { reachGoal } from "@/lib/metrika";
 import { PhoneLink } from "./phone-links/phone-link";
+import { CallbackButton } from "./callback-button"; // Импортируем нашу клиентскую кнопку
 
 interface HeroSectionProps {
   locale: Locale;
@@ -49,33 +49,37 @@ export function HeroSection({ locale }: HeroSectionProps) {
 
         {/* Dynamic Navigation/CTA */}
         <nav
-          // ДОБАВИЛИ flex-wrap, чтобы кнопки красиво адаптировались на средних экранах
           className="flex flex-col flex-wrap items-center justify-center gap-4 mb-16"
           aria-label="Main actions"
         >
-          {/* НОВАЯ КНОПКА ПОЗВОНИТЬ */}
-          <div>
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto cursor-pointer group px-8 py-6 bg-white/5 backdrop-blur-sm border-2 border-green-500/40 text-white font-semibold text-lg rounded-full hover:bg-green-500/20 hover:border-green-400/60 hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.15)] hover:shadow-[0_0_30px_rgba(34,197,94,0.3)]"
-            >
-              <div className="flex">
-                <div className="content-center">
+          {/* Группа кнопок телефонной связи (вызов напрямую + заказ звонка) */}
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
+            {/* Кнопка набора номера */}
+            <div className="w-full sm:w-auto">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto cursor-pointer group px-8 py-6 bg-white/5 backdrop-blur-sm border-2 border-green-500/40 text-white font-semibold text-lg rounded-full hover:bg-green-500/20 hover:border-green-400/60 hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(34,197,94,0.15)] hover:shadow-[0_0_30px_rgba(34,197,94,0.3)]"
+              >
+                <div className="flex items-center justify-center">
                   <Phone
                     className="ml-2 mr-2 h-5 w-5 text-green-400 group-hover:rotate-12 transition-transform duration-300"
                     aria-hidden="true"
                   />
+                  <PhoneLink
+                    className="w-full h-full align-middle"
+                    phoneNumber="+375291228484"
+                    displayPhoneNumber="+375 (29) 122-84-84"
+                  />
                 </div>
-                <PhoneLink
-                  className="w-full h-full align-middle"
-                  phoneNumber="+375291228484"
-                  displayPhoneNumber="+375 (29) 122-84-84"
-                />
-              </div>
-            </Button>
+              </Button>
+            </div>
+
+            {/* НАША КЛИЕНТСКАЯ КНОПКА (модалка открывается отсюда, Hero остается серверным) */}
+            <CallbackButton locale={locale} />
           </div>
-          <div className="gap-3 flex flex-col lg:flex-row">
+
+          <div className="gap-3 flex flex-col lg:flex-row w-full sm:w-auto justify-center">
             <Link href="/calculator" className="w-full sm:w-auto">
               <Button
                 size="lg"
@@ -112,6 +116,7 @@ export function HeroSection({ locale }: HeroSectionProps) {
             </Link>
           </div>
         </nav>
+
         {/* Dynamic Statistics */}
         <aside
           className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-16 text-white"

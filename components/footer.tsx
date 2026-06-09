@@ -261,6 +261,65 @@ export async function Footer() {
         </div>
 
         <div className="border-t border-white/15 pt-6 sm:pt-8 mt-6 sm:mt-8">
+          {/* Блок с юридическими реквизитами */}
+          <div className="mb-6 text-xs sm:text-[13px] text-gray-400/80 leading-relaxed text-center md:text-left space-y-1.5 border-b border-white/5 pb-6">
+            {locale === "ru" ? (
+              <>
+                <p>
+                  <strong>ИП Великий Константин Николаевич</strong>
+                </p>
+                <p>
+                  Свидетельство о государственной регистрации № 193461062,
+                  выдано Минским горисполкомом 28.08.2020 г.
+                </p>
+                <p>
+                  Регистрация в Государственном регистре информационных ресурсов
+                  (БелГИЭ) от 08.06.2026 г., регистрационный номер:{" "}
+                  <span className="font-mono text-white/90">
+                    SI1129294D885R303846ID216195260529
+                  </span>
+                  .
+                </p>
+              </>
+            ) : locale === "en" ? (
+              <>
+                <p>
+                  <strong>IE Velikiy Konstantin Nikolaevich</strong>
+                </p>
+                <p>
+                  Certificate of State Registration No. 193461062, issued by the
+                  Minsk City Executive Committee on August 28, 2020.
+                </p>
+                <p>
+                  Registration in the State Register of Information Resources
+                  (BelGIE) dated June 8, 2026, registration No:{" "}
+                  <span className="font-mono text-white/90">
+                    SI1129294D885R303846ID216195260529
+                  </span>
+                  .
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  <strong>个体工商户 Velikiy Konstantin Nikolaevich</strong>
+                </p>
+                <p>
+                  国家注册证书编号：193461062，由明斯克市执行委员会于 2020 年 8
+                  月 28 日颁发。
+                </p>
+                <p>
+                  国家信息资源登记册 (BelGIE) 注册日期：2026 年 6 月 8
+                  日，注册编号：
+                  <span className="font-mono text-white/90">
+                    SI1129294D885R303846ID216195260529
+                  </span>
+                  。
+                </p>
+              </>
+            )}
+          </div>
+
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-gray-300">
             <div className="text-center md:text-left">
               © {currentYear} SKTransfer.by.{" "}
@@ -294,13 +353,13 @@ export async function Footer() {
                 </Link>
               </div>
               <a
-                href="https://netnext.site/"
+                href="https://nexellent.by/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs hover:text-white transition-colors text-center"
               >
                 Designed And Developed by{" "}
-                <span className="font-semibold">NetNext Studio</span>
+                <span className="font-semibold">Nexellent Studio</span>
               </a>
             </div>
           </div>
