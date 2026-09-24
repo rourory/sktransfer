@@ -190,6 +190,10 @@ export const translations = {
     //   showLess: "Скрыть",
     // },
     services: {
+      jumpStart: "Прикурить автомобиль",
+      jumpStartDesc: "Быстрая помощь при севшем аккумуляторе",
+      jumpStartDetails:
+        "Экстренная помощь при севшем аккумуляторе 24/7. Профессиональное оборудование для безопасного запуска двигателя любого автомобиля. Опытные специалисты, быстрое прибытие. Работаем с легковыми автомобилями, внедорожниками и коммерческим транспортом.",
       transfers: "Трансферы",
       transfersDesc: "По Беларуси, России, СНГ и Европе",
       transfersDetails:
@@ -295,6 +299,19 @@ export const translations = {
             "Ожидание во время прогулок",
             "Помощь в выборе гида",
             "Авто на весь день",
+          ],
+        },
+        {
+          id: "jumpStart",
+          title: "Прикурить автомобиль",
+          description: "Быстрая помощь при севшем аккумуляторе",
+          details:
+            "Экстренная помощь при севшем аккумуляторе круглосуточно. Профессиональное пуско-зарядное оборудование для безопасного запуска двигателя любого автомобиля. Опытные специалисты, быстрое прибытие в любую точку Минска и области. Работаем с легковыми автомобилями, внедорожниками и коммерческим транспортом.",
+          features: [
+            "Круглосуточная помощь 24/7",
+            "Безопасный запуск двигателя",
+            "Профессиональное оборудование",
+            "Быстрое прибытие",
           ],
         },
       ],
@@ -752,6 +769,10 @@ export const translations = {
     //   showLess: "Hide",
     // },
     services: {
+      jumpStart: "Jump Start",
+      jumpStartDesc: "Quick help for dead battery",
+      jumpStartDetails:
+        "Emergency assistance for dead battery 24/7. Professional equipment for safe engine start of any vehicle. Experienced specialists, quick arrival. We work with cars, SUVs and commercial vehicles.",
       transfers: "Transfers",
       transfersDesc: "Across Belarus, Russia, CIS and Europe",
       transfersDetails:
@@ -857,6 +878,19 @@ export const translations = {
             "Waiting during stops",
             "Guide assistance",
             "Car for the whole day",
+          ],
+        },
+        {
+          id: "jumpStart",
+          title: "Car Jump Start",
+          description: "Quick help for dead battery",
+          details:
+            "Emergency jump start service available 24/7. Professional jump starters for safe engine start of any vehicle. Experienced technicians with quick arrival anywhere in Minsk and region. We service cars, SUVs, and commercial vehicles.",
+          features: [
+            "24/7 emergency service",
+            "Safe engine start",
+            "Professional equipment",
+            "Quick arrival time",
           ],
         },
       ],
@@ -1312,6 +1346,10 @@ export const translations = {
     //   showLess: "隐藏",
     // },
     services: {
+      jumpStart: "汽车搭电",
+      jumpStartDesc: "电池没电时的快速帮助",
+      jumpStartDetails:
+        "24/7紧急电池搭电服务。专业设备安全启动任何车辆的发动机。经验丰富的专家，快速到达。我们为轿车、SUV和商用车提供服务。",
       transfers: "接送服务",
       transfersDesc: "遍及白俄罗斯、俄罗斯、独联体和欧洲",
       transfersDetails:
@@ -1398,6 +1436,19 @@ export const translations = {
           details:
             "提供明斯克、米尔城堡、涅斯维日城堡、别洛韦日森林等地的私人 экскурсии。您可自由安排时间和路线，享受舒适旅程。",
           features: ["定制路线", "景点等待", "协助导游安排", "全天用车"],
+        },
+        {
+          id: "jumpStart",
+          title: "汽车搭电服务",
+          description: "电池没电时的快速帮助",
+          details:
+            "24小时紧急汽车搭电服务。专业搭电设备安全启动任何车辆的发动机。经验丰富的技术人员快速到达明斯克及周边任何地点。我们为轿车、SUV和商用车提供服务。",
+          features: [
+            "24小时紧急服务",
+            "安全启动发动机",
+            "专业设备",
+            "快速到达",
+          ],
         },
       ],
     },

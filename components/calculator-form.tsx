@@ -17,6 +17,7 @@ import {
   Clock,
   CheckCircle2,
   Loader2,
+  Info,
 } from "lucide-react";
 
 import { type Locale, translations } from "@/lib/i18n";
@@ -127,6 +128,7 @@ export function CalculatorForm({
 
   const [routeLine, setRouteLine] = useState<[number, number][] | null>(null);
   const [isCityTour, setIsCityTour] = useState(false);
+  const [showInfoMessage, setShowInfoMessage] = useState(false);
 
   const [results, setResults] = useState<Record<string, number> | null>(
     preCalculatedResults,
@@ -206,73 +208,6 @@ export function CalculatorForm({
     return parts.length > 0 ? parts.join(", ") : "Неизвестный адрес";
   };
 
-  // const fetchAddressSuggestions = async (
-  //   query: string,
-  //   isFromField: boolean,
-  // ) => {
-  //   if (query.length < 3) {
-  //     if (isFromField) {
-  //       setFromSuggestions([]);
-  //       setShowFromSuggestions(false);
-  //     } else {
-  //       setToSuggestions([]);
-  //       setShowToSuggestions(false);
-  //     }
-  //     return;
-  //   }
-
-  //   if (isFromField) setIsSearchingFrom(true);
-  //   else setIsSearchingTo(true);
-
-  //   if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-
-  //   searchTimerRef.current = setTimeout(async () => {
-  //     try {
-  //       const smartQuery = query.replace(/([а-яА-Яa-zA-Z])\s+(\d+)/g, "$1, $2");
-  //       const response = await fetch(
-  //         `https://nominatim.openstreetmap.org/search?` +
-  //           new URLSearchParams({
-  //             format: "json",
-  //             q: smartQuery,
-  //             limit: "5",
-  //             addressdetails: "1",
-  //             "accept-language": locale === "ru" ? "ru" : "en",
-  //             countrycodes: "by,ru,pl,lt,lv",
-  //           }),
-  //         { headers: { "User-Agent": "SKTransfer.by" } },
-  //       );
-
-  //       if (!response.ok)
-  //         throw new Error(`HTTP error! status: ${response.status}`);
-
-  //       const data = await response.json();
-  //       const suggestions: AddressSuggestion[] = data.map((item: any) => ({
-  //         display_name: formatNominatimAddress(item.address, item.name),
-  //         lat: Number(item.lat),
-  //         lon: Number(item.lon),
-  //       }));
-
-  //       const uniqueSuggestions = suggestions.filter(
-  //         (v, i, a) =>
-  //           a.findIndex((t) => t.display_name === v.display_name) === i,
-  //       );
-
-  //       if (isFromField) {
-  //         setFromSuggestions(uniqueSuggestions);
-  //         setShowFromSuggestions(uniqueSuggestions.length > 0);
-  //       } else {
-  //         setToSuggestions(uniqueSuggestions);
-  //         setShowToSuggestions(uniqueSuggestions.length > 0);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching addresses:", error);
-  //     } finally {
-  //       if (isFromField) setIsSearchingFrom(false);
-  //       else setIsSearchingTo(false);
-  //     }
-  //   }, 500);
-  // };
-
   const fetchRouteAndDistance = async (
     startLat: number,
     startLon: number,
@@ -351,6 +286,7 @@ export function CalculatorForm({
       });
       setResults(calculated);
       setIsCalculating(false);
+      setShowInfoMessage(true);
     }, 300);
   };
 
@@ -367,11 +303,6 @@ export function CalculatorForm({
     setBookingModalOpen(true);
   };
 
-  // useEffect(() => {
-  //   return () => {
-  //     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-  //   };
-  // }, []);
   useEffect(() => {
     fetchSuggestions(debouncedFrom, true);
   }, [debouncedFrom]);
@@ -515,16 +446,11 @@ export function CalculatorForm({
                 <Input
                   placeholder="Минск, Независимости"
                   value={from}
-                  // onChange={(e) => {
-                  //   setFrom(e.target.value);
-                  //   fetchAddressSuggestions(e.target.value, true);
-                  // }}
                   onBlur={() => applyDefaultIfNeeded(true)}
                   onChange={(e) => {
                     setFrom(e.target.value);
                     setFromCoords(null);
                   }}
-                  // className="pl-10 border-2 border-gray-200 focus:border-[var(--gold)] w-full"
                   className={`pl-10 border-2 w-full ${
                     fromError
                       ? "border-red-500 focus:border-red-500"
@@ -562,10 +488,6 @@ export function CalculatorForm({
                   <Input
                     placeholder="Гродно / Нарочь / Внуково"
                     value={to}
-                    // onChange={(e) => {
-                    //   setTo(e.target.value);
-                    //   fetchAddressSuggestions(e.target.value, false);
-                    // }}
                     onBlur={() => applyDefaultIfNeeded(false)}
                     onChange={(e) => {
                       setTo(e.target.value);
@@ -620,6 +542,22 @@ export function CalculatorForm({
               </div>
             </div>
 
+            {/* Информационный блок о финальной стоимости */}
+            {showInfoMessage && results && (
+              <div className="flex items-start gap-3 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-[var(--gold)]/20 rounded-lg animate-in fade-in slide-in-from-top-2 duration-500">
+                <div className="flex-shrink-0 p-1.5 bg-[var(--gold)]/10 rounded-full">
+                  <Info className="w-4 h-4 text-[var(--gold)]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 leading-relaxed">
+                    Окончательная стоимость поездки уточняется у диспетчера с
+                    учётом дополнительных факторов: времени суток, количества
+                    пассажиров и багажа, дорожной обстановки.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <Button
               onClick={calculateAllPrices}
               disabled={!distance || Number.parseFloat(distance) <= 0}
@@ -653,13 +591,28 @@ export function CalculatorForm({
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="relative w-24 h-16 sm:w-36 sm:h-24 flex-shrink-0 rounded-md overflow-hidden border border-gray-200 shadow-sm">
-                        <Image
+                        {/* <Image
                           src={tariff.imageUrl}
                           alt={displayName}
                           fill
                           className="object-cover object-center"
                           sizes="(max-width: 640px) 96px, 144px"
-                        />
+                        /> */}
+                        {tariff.imageUrl.startsWith("/uploads/") ? (
+                          <img
+                            src={tariff.imageUrl}
+                            alt={displayName}
+                            className="object-cover object-center w-full h-full"
+                          />
+                        ) : (
+                          <Image
+                            src={tariff.imageUrl}
+                            alt={displayName}
+                            fill
+                            className="object-cover object-center"
+                            sizes="(max-width: 640px) 96px, 144px"
+                          />
+                        )}
                       </div>
                       <div>
                         <h5 className="font-semibold text-lg">{displayName}</h5>
