@@ -26,38 +26,49 @@ export function ServicesSection({ locale }: ServicesSectionProps) {
   // Привязываем иконки и картинки к ID услуг из локализации
   const serviceAssets: Record<
     string,
-    { icon: any; image: string; link: string }
+    { icon: any; image: string; link: string; showBookButton: boolean }
   > = {
     transfers: {
       icon: Car,
       image: "/services/transfer.webp",
       link: "/calculator",
+      showBookButton: true,
     },
     airport: {
       icon: Plane,
       image: "/services/airport.webp",
       link: "/calculator",
+      showBookButton: true,
     },
-    vip: { icon: Crown, image: "/services/vip.webp", link: "/calculator" },
+    vip: {
+      icon: Crown,
+      image: "/services/vip.webp",
+      link: "/calculator",
+      showBookButton: true,
+    },
     business: {
       icon: Briefcase,
       image: "/services/business.webp",
       link: "/calculator",
+      showBookButton: true,
     },
     resorts: {
       icon: Building2,
       image: "/services/resorts.webp",
       link: "/resorts",
+      showBookButton: true,
     },
     excursions: {
       icon: Compass,
       image: "/services/excursions.webp",
       link: "/excursions",
+      showBookButton: true,
     },
     jumpStart: {
       icon: Zap,
       image: "/services/jump-start.jpg",
       link: "/calculator",
+      showBookButton: false,
     },
   };
 
@@ -128,18 +139,30 @@ export function ServicesSection({ locale }: ServicesSectionProps) {
                 ))}
               </ul>
 
-              {/* CTA Кнопка */}
-              <div className="pt-2">
-                <Button
-                  asChild
-                  size="lg"
-                  className="gold-gradient hover:opacity-90 hover:shadow-lg hover:shadow-[var(--gold)]/20 transition-all rounded-xl text-base px-8 py-6 text-white"
-                >
-                  <Link href={assets.link}>
-                    {t.services.bookNow}
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
-                </Button>
+              <div className="pt-2 space-y-3">
+                {assets.showBookButton !== false ? (
+                  <Button
+                    asChild
+                    size="lg"
+                    className="gold-gradient hover:opacity-90 hover:shadow-lg hover:shadow-[var(--gold)]/20 transition-all rounded-xl text-base px-8 py-6 text-white"
+                  >
+                    <Link href={assets.link}>
+                      {t.services.bookNow}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button
+                    asChild
+                    size="lg"
+                    className="gold-gradient hover:opacity-90 hover:shadow-lg hover:shadow-[var(--gold)]/20 transition-all rounded-xl text-base px-8 py-6 text-white"
+                  >
+                    <a href="tel:+375291228484">
+                      {t.services.callNow || "Позвонить сейчас"}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

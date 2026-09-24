@@ -190,6 +190,7 @@ export const translations = {
     //   showLess: "Скрыть",
     // },
     services: {
+      callNow: "Позвонить сейчас",
       jumpStart: "Прикурить автомобиль",
       jumpStartDesc: "Быстрая помощь при севшем аккумуляторе",
       jumpStartDetails:
@@ -769,6 +770,7 @@ export const translations = {
     //   showLess: "Hide",
     // },
     services: {
+      callNow: "Call now",
       jumpStart: "Jump Start",
       jumpStartDesc: "Quick help for dead battery",
       jumpStartDetails:
@@ -1346,6 +1348,7 @@ export const translations = {
     //   showLess: "隐藏",
     // },
     services: {
+      callNow: "立即致电",
       jumpStart: "汽车搭电",
       jumpStartDesc: "电池没电时的快速帮助",
       jumpStartDetails:
